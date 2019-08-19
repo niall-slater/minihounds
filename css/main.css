@@ -1,0 +1,103 @@
+body {
+  background: #333;
+}
+
+#probe-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.probe {
+  background: #eee;
+  border-radius: 4px;
+  margin: 4px;
+  padding: 8px;
+  width: 180px;
+}
+
+.console {
+  background: #000;
+  border: 4px inset darkgrey;
+  color: #0f0;
+  font-family: monospace;
+  height: 256px;
+  position: relative;
+  overflow-y: scroll;
+  flex-grow: 1;
+}
+
+.map {
+  background: #333;
+  border: 4px inset darkgrey;
+  flex-grow: 0;
+  overflow: hidden;
+}
+
+.map .canvas {
+  margin: 0 auto;
+}
+
+.console::-webkit-scrollbar {
+  background: #333;
+}
+.console::-webkit-scrollbar-thumb {
+  background: #0f0;
+}
+
+.console ul {
+  list-style: none;
+  margin: 0;
+  padding: 4px 12px;
+}
+
+.console li:before {
+  color: #0f0;
+  content: '> ';
+}
+
+.console li img {
+  width: 240px;
+  transform: translateX(-30%)
+}
+
+.console-input-wrapper {
+  background: #000;
+  border: 4px inset darkgrey;
+  border-top: none;
+  color: #0f0;
+  font-family: monospace;
+  width: 100%;
+}
+
+.console-input-wrapper input {
+  background: #000;
+  border: none;
+  border-top: 1px solid #050;
+  color: #fff;
+  margin: 0;
+  padding: 4px;
+  width: 80%;
+}
+
+.btn-console {
+  background: #000;
+  border: 1px solid #050;
+  color: #0f0;
+  float: right;
+  margin: 0;
+  padding: 4px;
+  width: 20%;
+}
+
+#codex-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row;
+}
+
+#codex-content .card {
+  margin: 4px;
+  box-shadow: 4px 4px 4px rgba(0,0,0,0.2);
+  padding: 14px;
+}
