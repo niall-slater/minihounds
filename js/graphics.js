@@ -24,8 +24,17 @@ var graphics = {
     this.ctx.fillStyle = '#000';
     this.ctx.fill();
     this.ctx.fillStyle = "#00FF00";
-    mapTest.forEach(function (poly){
-      graphics.drawPolygon(poly, poly.stroke, poly.fill);
+    map.regions.forEach(function (region){
+      graphics.drawPolygon(region, region.stroke, region.fill);
+    });
+    
+    map.regions.forEach(function (region){
+      graphics.drawText(region.name, 
+                        region.center[0] - 50 + 2,
+                        region.center[1] + 2, '#000');
+      graphics.drawText(region.name, 
+                        region.center[0] - 50,
+                        region.center[1]);
     });
   },
   
@@ -72,6 +81,15 @@ var graphics = {
       this.ctx.fill();
     if (stroke)
       this.ctx.stroke();
+  },
+  
+  drawText: function(text, x, y, color) {
+    if (color)
+      this.ctx.fillStyle = color;
+    else
+      this.ctx.fillStyle = '#fff'
+    this.ctx.font = '30px fantasy';
+    this.ctx.fillText(text, x, y);
   },
   
   drawLine: function(x1, y1, x2, y2, weight, color) {
