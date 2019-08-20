@@ -50,9 +50,11 @@ function start() {
   
   addMessage("Rolled " + rollDie(20), '#fff');
   map = new Map(seed);
-  hounds.push(new Hound(1, 'benjamin', {x: 550, y: 950}, 0));
-  hounds.push(new Hound(2, 'lenjamin', {x: 150, y: 50 }, 1));
-  hounds.push(new Hound(3, 'tenjamin', {x: 50,  y: 150}, 1));
+  hounds.push(new Hound(1, 'achilles', {x: 550, y: 950}, 0));
+  hounds.push(new Hound(2, 'patroclus', {x: 450, y: 950}, 0));
+  hounds.push(new Hound(3, 'hector', {x: 50, y: 150 }, 1));
+  hounds.push(new Hound(4, 'priam', {x: 150,  y: 50}, 1));
+  hounds.push(new Hound(5, 'helen', {x: 250,  y: 150}, 1));
 }
 
 /* Game functions */

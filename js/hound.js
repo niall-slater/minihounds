@@ -14,7 +14,7 @@ class Hound {
       hp: 6 + rollDice(6, level),
       ac: 6 + rollDice(4, Math.floor(level/4)),
       speed: 23,
-      sightRange: 600
+      sightRange: 350
     }
     
     this.stroke = '#fff';

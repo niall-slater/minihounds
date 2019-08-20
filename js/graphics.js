@@ -40,6 +40,8 @@ var graphics = {
     
     //Render projectiles
     projectiles.forEach(function(p){p.render()});
+    
+    this.renderSightRange();
   },
   
   drawDot: function(x, y, size, label, color, labelColor) {
@@ -108,6 +110,16 @@ var graphics = {
     this.ctx.moveTo(x1, y1);
     this.ctx.lineTo(x2, y2);
     this.ctx.stroke();
+  },
+  
+  renderSightRange: function() {
+    var playerHounds = hounds.filter(function(hound){return hound.team === playerTeam});
+    playerHounds.forEach(function (hound) {
+      graphics.ctx.beginPath();
+      graphics.ctx.arc(hound.pos.x, hound.pos.y, hound.stats.sightRange,
+              0, 2 * Math.PI);
+      graphics.ctx.stroke();
+    });
   }
 }
 
