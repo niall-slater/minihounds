@@ -36,12 +36,32 @@ function parseCommand(command) {
       subject.stopMoving();
       break;
     }
+    case 'attack': {
+      var subject = getNamedPlayerHound(name);
+      if (args.length != 1) {
+        addMessage('invalid command');
+        return; 
+      }
+      var target = getNamedHound(args[0]);
+      if (!target || !target.inSightRange()) {
+        addMessage('Cannot acquire target "' + args[0] + '"');
+        return;
+      }
+      subject.attack(target);
+      break;
+    }
     default: break;
   }
 }
 
 function getNamedPlayerHound(name) {
   return getPlayerHounds().find(
+    (hound) => {return hound.name === name}
+  );
+}
+
+function getNamedHound(name) {
+  return hounds.find(
     (hound) => {return hound.name === name}
   );
 }

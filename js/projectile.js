@@ -1,6 +1,8 @@
 class Projectile {
   constructor(creator, target) {
-    this.pos = creator.pos;
+    this.pos = {x: creator.pos.x, y: creator.pos.y};
+    this.creator = creator;
+    this.target = target;
     
     this.discovered = false;
     this.alive = true;
@@ -12,25 +14,30 @@ class Projectile {
     
     this.stroke = '#fff';
     this.fill = '#000';
+    this.origin = {x: creator.pos.x, y: creator.pos.y};
     
     this.updateBounds();
+    
+    this.moveTo([target.pos.x, target.pos.y]);
   }
   
-  moveTo(target) {
-    var hound = this;
+  moveTo(moveTarget) {
+    var projectile = this;
     var coords = { x: this.pos.x, y: this.pos.y };
-    var xdiff = this.pos.x - target[0];
-    var ydiff = this.pos.y - target[1];
+    var xdiff = this.pos.x - moveTarget[0];
+    var ydiff = this.pos.y - moveTarget[1];
     var distance = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
     var travelTime = distance / (this.stats.speed / 100);
 
     var tween = new TWEEN.Tween(coords)
-            .to({ x: target[0] - 4, y: target[1] - 4 }, travelTime)
+            .to({ x: moveTarget[0] - 4, y: moveTarget[1] - 4 }, travelTime)
             .onUpdate(function(object) {
-              hound.pos.x = coords.x;
-              hound.pos.y = coords.y;
+              projectile.pos.x = coords.x;
+              projectile.pos.y = coords.y;
             })
             .onComplete(function(object) {
+              projectile.impact();
+              projectile.target.hurt();
             })
             .start();
   }
@@ -46,6 +53,8 @@ class Projectile {
   }
   
   update() {
+    if(!this.alive)
+      return;
     this.updateBounds();
   }
   
@@ -59,6 +68,9 @@ class Projectile {
   }
   
   render() {
+    if(!this.alive)
+      return;
+    graphics.drawLine(this.origin.x, this.origin.y, this.pos.x, this.pos.y, 2, this.creator.fill);
     graphics.drawPolygon(this.poly, this.stroke, this.fill);
   }
   

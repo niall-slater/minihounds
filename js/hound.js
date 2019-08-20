@@ -20,7 +20,7 @@ class Hound {
     this.stroke = '#fff';
     this.fill = colors_primary[team];
     this.team = team;
-    if (team != playerTeam)
+    if (team != playerTeam && false)
       this.wander();
     
     this.updateBounds();
@@ -65,6 +65,8 @@ class Hound {
   }
   
   update() {
+    if (!this.alive)
+      return;
     this.updateBounds();
   }
   
@@ -80,7 +82,10 @@ class Hound {
   }
   
   hurt(amount) {
+    if (!amount)
+      amount = rollDice(24, 1);
     this.stats.hp -= amount;
+    console.log(this.stats.hp);
     if (this.stats.hp <= 0) {
       this.stats.hp = 0;
       this.die();
@@ -88,6 +93,8 @@ class Hound {
   }
   
   render() {
+    if (!this.alive)
+      return;
     if (!this.inSightRange())
       return;
     graphics.drawPolygon(this.poly, this.stroke, this.fill);
@@ -110,6 +117,7 @@ class Hound {
   }
   
   die() {
+    addMessage(this.name + ' DESTROYED');
     this.alive = false;
   }
   
@@ -117,6 +125,11 @@ class Hound {
     var target = [Math.random() * settings.gameWidth, Math.random() * settings.gameHeight/2];
     var repeat = function(hound) {hound.wander();}
     this.moveTo(target, repeat);
+  }
+  
+  attack(target) {
+    projectiles.push(new Projectile(this, target));
+    addMessage(this.name + ' WEAPON DISCHARGE');
   }
 }
 

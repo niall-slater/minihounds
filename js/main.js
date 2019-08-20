@@ -47,8 +47,7 @@ function start() {
   
   graphics.init();
   setInterval(update, timeStep);
-  
-  addMessage("Rolled " + rollDie(20), '#fff');
+
   map = new Map(seed);
   hounds.push(new Hound(1, 'achilles', {x: 550, y: 950}, 0));
   hounds.push(new Hound(2, 'patroclus', {x: 450, y: 950}, 0));
