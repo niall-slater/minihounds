@@ -2,7 +2,7 @@
 var voronoi = d3.voronoi();
 
 var colors_primary = [
-  '#f00', '#0f0', '#00f', '#ff0'
+  '#f00', '#00f'
 ];
 
 var graphics = {
@@ -35,7 +35,11 @@ var graphics = {
                         region.center[1]);
     });
     
-    hounds.forEach(function(hound){hound.render();});
+    //Render hounds
+    hounds.forEach(function(h){h.render()});
+    
+    //Render projectiles
+    projectiles.forEach(function(p){p.render()});
   },
   
   drawDot: function(x, y, size, label, color, labelColor) {
@@ -83,12 +87,14 @@ var graphics = {
       this.ctx.stroke();
   },
   
-  drawText: function(text, x, y, color) {
+  drawText: function(text, x, y, color, size) {
     if (color)
       this.ctx.fillStyle = color;
     else
       this.ctx.fillStyle = '#fff'
     this.ctx.font = '30px fantasy';
+    if (size)
+      this.ctx.font = size + 'px fantasy';
     this.ctx.fillText(text, x, y);
   },
   

@@ -2,6 +2,8 @@ var timeStep = 10;
 var map;
 
 var hounds = [];
+var projectiles = [];
+var playerTeam = 0;
 
 var settings = {
   gameWidth: 1280,
@@ -22,6 +24,9 @@ var output = {
   alert: undefined,
   planetList: undefined
 };
+
+var seed = [13, 1, 3231, 4, 5, 6, 3, 1, 23, 4, 5, 6, 3, 1, 23, 4, 5, 6, 3, 1, 23, 4, 5, 6];
+var voronoiDensity = seed.length / 2;
 
 $( document ).ready(function() {
   setUpElementReferences();
@@ -44,14 +49,10 @@ function start() {
   setInterval(update, timeStep);
   
   addMessage("Rolled " + rollDie(20), '#fff');
-  map = new Map('seed');
-  hounds.push(new Hound(1, 'benjamin', {x: 50, y: 50}));
-  hounds.push(new Hound(2, 'lenjamin', {x: 150, y: 50}));
-  hounds.push(new Hound(3, 'tenjamin', {x: 50, y: 150}));
-  
-  hounds.forEach((hound) => {
-    hound.moveTo([300, 300]);
-  })
+  map = new Map(seed);
+  hounds.push(new Hound(1, 'benjamin', {x: 550, y: 950}, 0));
+  hounds.push(new Hound(2, 'lenjamin', {x: 150, y: 50 }, 1));
+  hounds.push(new Hound(3, 'tenjamin', {x: 50,  y: 150}, 1));
 }
 
 /* Game functions */
@@ -66,6 +67,7 @@ function update() {
   map.update();
   
   hounds.forEach(function(hound){hound.update();});
+  projectiles.forEach(function(projectile){projectile.update();});
   
   //render updated graphics
   graphics.render();

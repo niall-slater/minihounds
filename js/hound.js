@@ -1,10 +1,10 @@
 class Hound {
-  constructor(id, name, position) {
+  constructor(id, name, position, team) {
     this.id = id;
     this.name = name;
     this.pos = position;
     
-    this.discovered = false;
+    this.visible = false;
     this.alive = true;
     
     var level = 1 + rollDie(20);
@@ -13,22 +13,26 @@ class Hound {
       level: level,
       hp: 6 + rollDice(6, level),
       ac: 6 + rollDice(4, Math.floor(level/4)),
-      speed: 3
+      speed: 23,
+      sightRange: 600
     }
     
     this.stroke = '#fff';
-    this.fill = getRandom(colors_primary);
+    this.fill = colors_primary[team];
+    this.team = team;
+    if (team != playerTeam)
+      this.wander();
     
     this.updateBounds();
   }
   
-  moveTo(target) {
-    addMessage("Now approaching: " + target);
+  moveTo(target, nextTask) {
+    console.log(this.name, 'moving to ' + target);
+    //Target is an array like [x, y]
+    addMessage(this.name + " moving to " + target);
     var hound = this;
     var coords = { x: this.pos.x, y: this.pos.y };
-    var xdiff = this.pos.x - target[0];
-    var ydiff = this.pos.y - target[1];
-    var distance = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
+    var distance = distanceBetween(this.pos, {x: target[0], y: target[1]});
     var travelTime = distance / (this.stats.speed / 100);
 
     var tween = new TWEEN.Tween(coords)
@@ -37,8 +41,7 @@ class Hound {
               hound.pos.x = coords.x;
               hound.pos.y = coords.y;
             })
-            .onComplete(function(object) {
-            })
+            .onComplete(() => {nextTask(this);})
             .start();
   }
   
@@ -74,10 +77,42 @@ class Hound {
   }
   
   render() {
+    if (!this.inSightRange())
+      return;
     graphics.drawPolygon(this.poly, this.stroke, this.fill);
+    graphics.drawText(this.name, this.pos.x - 32, this.pos.y + 34, this.fill, 22);
+    graphics.drawText(this.name, this.pos.x - 34, this.pos.y + 32, '#fff', 22);
+  }
+  
+  inSightRange() {
+
+    var playerHounds = hounds.filter(function (hound) {
+      return hound.team == playerTeam;
+    });
+
+    for (var i = 0; i < playerHounds.length; i++) {
+      if (distanceBetween(playerHounds[i].pos, this.pos) < playerHounds[i].stats.sightRange)
+        return true;
+    }
+
+    return false;
   }
   
   die() {
     this.alive = false;
   }
+  
+  wander() {
+    var target = [Math.random() * settings.gameWidth, Math.random() * settings.gameHeight/2];
+    var repeat = function(hound) {hound.wander();}
+    this.moveTo(target, repeat);
+  }
+}
+
+function distanceBetween(a, b) {
+  //a and b are {x: value, y: value} objects
+  var xdiff = a.x - b.x;
+  var ydiff = a.y - b.y;
+  var distance = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
+  return distance;
 }

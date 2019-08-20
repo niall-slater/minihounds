@@ -22,16 +22,17 @@ function getRandom(array) {
 }
 
 class Map {
-  constructor(seed) {
-    this.seed = seed;
+  constructor(givenSeed) {
+    this.seed = givenSeed;
     
     this.height = settings.gameHeight;
     this.width = settings.gameWidth;
     
     var voronoiPoints = [];
-    var numPoints = 5;
-    for (var i = 0; i < numPoints; i++) {
-      voronoiPoints.push([Math.random() * this.width, Math.random() * this.height]);
+    for (var i = 0; i < voronoiDensity; i++) {
+      var x = randomWithSeed(this.seed[i]) * this.width;
+      var y = randomWithSeed(this.seed[i + 1]) * this.height;
+      voronoiPoints.push([x, y]);
     }
     
     
@@ -56,7 +57,6 @@ class Map {
     });
     
     //define areas as polygons
-    console.log(this);
   }
   
   update() {
@@ -66,6 +66,12 @@ class Map {
   getRegionAt(x, y) {
     return ;
   }
+}
+
+function randomWithSeed(seed) {
+  var x = Math.sin(seed++) * 10000;
+  var result = x - Math.floor(x);
+  return result;
 }
 
 function getCenterOfPolygon(points) {
