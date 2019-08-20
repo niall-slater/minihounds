@@ -1,11 +1,9 @@
 //Import voronoi
 var voronoi = d3.voronoi();
 
-var colors = {
-  star: "rgba(68,255,68,1)",
-  planet: "rgba(0,255,0,1)",
-  text: "rgba(255,255,255,1)"
-}
+var colors_primary = [
+  '#f00', '#0f0', '#00f', '#ff0'
+];
 
 var graphics = {
   init: function() {
@@ -36,6 +34,8 @@ var graphics = {
                         region.center[0] - 50,
                         region.center[1]);
     });
+    
+    hounds.forEach(function(hound){hound.render();});
   },
   
   drawDot: function(x, y, size, label, color, labelColor) {
@@ -102,49 +102,6 @@ var graphics = {
     this.ctx.moveTo(x1, y1);
     this.ctx.lineTo(x2, y2);
     this.ctx.stroke();
-  },
-  
-  drawOrbit: function(planet) {
-    if (Math.random() < this.flickerFrequency)
-      return;
-    this.ctx.beginPath();
-    this.ctx.setLineDash([6, 3]);
-    this.ctx.arc(this.center.x, this.center.y, planet.distance * this.scale, 0, 2 * Math.PI);
-    this.ctx.stroke();
-  },
-  
-  drawStar: function(star) {
-    if (Math.random() < this.flickerFrequency)
-      return;
-    this.drawDot(this.center.x, this.center.y, star.mass * this.starScale, star.name, colors.star, colors.text);
-    star.x = this.center.x; star.y = this.center.y;
-  },
-  
-  drawPlanet: function(planet) {
-    if (Math.random() < this.flickerFrequency)
-      return;
-    var pos = {x: this.center.x, y: this.center.y};
-    pos.y -= planet.distance * this.scale;
-    var rotated = rotatePoint(
-      this.center.x,
-      this.center.y,
-      pos.x,
-      pos.y,
-      planet.angle
-    );
-    
-    pos.x = rotated[0]; pos.y = rotated[1];
-    planet.pos = {
-      x: pos.x, y: pos.y
-    };
-    this.ctx.strokeStyle = "#008800";
-    this.drawOrbit(planet);
-    this.ctx.strokeStyle = "#00FF00";
-    this.ctx.globalAlpha = planet.opacity;
-    this.ctx.strokeStyle = colors.planet;
-    this.ctx.fillStyle = "#FFFFFF";
-    this.drawDot(pos.x, pos.y, planet.mass * this.planetScale, planet.name);
-    this.ctx.globalAlpha = 1;
   }
 }
 

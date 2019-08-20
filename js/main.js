@@ -1,6 +1,7 @@
-var timeStep = 60;
+var timeStep = 10;
 var map;
 
+var hounds = [];
 
 var settings = {
   gameWidth: 1280,
@@ -42,8 +43,15 @@ function start() {
   graphics.init();
   setInterval(update, timeStep);
   
-  addMessage("Rolled " + rollDie(20), colors.text);
+  addMessage("Rolled " + rollDie(20), '#fff');
   map = new Map('seed');
+  hounds.push(new Hound(1, 'benjamin', {x: 50, y: 50}));
+  hounds.push(new Hound(2, 'lenjamin', {x: 150, y: 50}));
+  hounds.push(new Hound(3, 'tenjamin', {x: 50, y: 150}));
+  
+  hounds.forEach((hound) => {
+    hound.moveTo([300, 300]);
+  })
 }
 
 /* Game functions */
@@ -56,6 +64,8 @@ function update() {
   updateAllDisplays();
 
   map.update();
+  
+  hounds.forEach(function(hound){hound.update();});
   
   //render updated graphics
   graphics.render();

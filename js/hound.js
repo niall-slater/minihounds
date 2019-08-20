@@ -2,7 +2,7 @@ class Hound {
   constructor(id, name, position) {
     this.id = id;
     this.name = name;
-    this.position = position;
+    this.pos = position;
     
     this.discovered = false;
     this.alive = true;
@@ -12,26 +12,46 @@ class Hound {
     this.stats = {
       level: level,
       hp: 6 + rollDice(6, level),
-      ac: 6 + rollDice(4, Math.floor(level/4))
+      ac: 6 + rollDice(4, Math.floor(level/4)),
+      speed: 3
     }
+    
+    this.stroke = '#fff';
+    this.fill = getRandom(colors_primary);
+    
+    this.updateBounds();
   }
   
   moveTo(target) {
-    addMessage("Now approaching: " + target.name);
+    addMessage("Now approaching: " + target);
+    var hound = this;
     var coords = { x: this.pos.x, y: this.pos.y };
-    var travelTime = 1700;
+    var xdiff = this.pos.x - target[0];
+    var ydiff = this.pos.y - target[1];
+    var distance = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
+    var travelTime = distance / (this.stats.speed / 100);
+
     var tween = new TWEEN.Tween(coords)
             .to({ x: target[0] - 4, y: target[1] - 4 }, travelTime)
-            .easing(TWEEN.Easing.Quadratic.Out)
             .onUpdate(function(object) {
-              player.pos.x = coords.x;
-              player.pos.y = coords.y;
+              hound.pos.x = coords.x;
+              hound.pos.y = coords.y;
             })
             .onComplete(function(object) {
-              player.followingObject = true;
-              $('#button-scan').removeClass('disabled');
             })
             .start();
+  }
+  
+  updateBounds() {
+    this.poly = [
+      [this.pos.x - 10, this.pos.y + 10],
+      [this.pos.x + 0,  this.pos.y - 10],
+      [this.pos.x + 10, this.pos.y + 10]
+    ];
+  }
+  
+  update() {
+    this.updateBounds();
   }
   
   onInspect() {
@@ -51,6 +71,10 @@ class Hound {
       this.stats.hp = 0;
       this.die();
     }
+  }
+  
+  render() {
+    graphics.drawPolygon(this.poly, this.stroke, this.fill);
   }
   
   die() {
