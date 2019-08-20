@@ -27,6 +27,8 @@ class Hound {
   }
   
   moveTo(target, nextTask) {
+    if (this.tween)
+      this.tween.stop();
     //Target is an array like [x, y]
     if (this.team === playerTeam)
       addMessage(this.name + " moving to " + target);
@@ -36,13 +38,18 @@ class Hound {
     var travelTime = distance / (this.stats.speed / 100);
 
     this.tween = new TWEEN.Tween(coords)
-            .to({ x: target[0] - 4, y: target[1] - 4 }, travelTime)
-            .onUpdate(function(object) {
-              hound.pos.x = coords.x;
-              hound.pos.y = coords.y;
-            })
-            .onComplete(() => {if (nextTask) {nextTask(this);}})
-            .start();
+      .to({ x: target[0] - 4, y: target[1] - 4 }, travelTime)
+      .onUpdate(function(object) {
+        hound.pos.x = coords.x;
+        hound.pos.y = coords.y;
+      })
+      .onComplete(() => {
+        if (nextTask) {
+          nextTask(this);
+        }
+        this.tween = null;
+      })
+      .start();
   }
   
   stopMoving() {
