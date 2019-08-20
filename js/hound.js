@@ -13,7 +13,7 @@ class Hound {
       level: level,
       hp: 6 + rollDice(6, level),
       ac: 6 + rollDice(4, Math.floor(level/4)),
-      speed: 23,
+      speed: 3,
       sightRange: 350
     }
     
@@ -27,22 +27,26 @@ class Hound {
   }
   
   moveTo(target, nextTask) {
-    console.log(this.name, 'moving to ' + target);
     //Target is an array like [x, y]
-    addMessage(this.name + " moving to " + target);
+    if (this.team === playerTeam)
+      addMessage(this.name + " moving to " + target);
     var hound = this;
     var coords = { x: this.pos.x, y: this.pos.y };
     var distance = distanceBetween(this.pos, {x: target[0], y: target[1]});
     var travelTime = distance / (this.stats.speed / 100);
 
-    var tween = new TWEEN.Tween(coords)
+    this.tween = new TWEEN.Tween(coords)
             .to({ x: target[0] - 4, y: target[1] - 4 }, travelTime)
             .onUpdate(function(object) {
               hound.pos.x = coords.x;
               hound.pos.y = coords.y;
             })
-            .onComplete(() => {nextTask(this);})
+            .onComplete(() => {if (nextTask) {nextTask(this);}})
             .start();
+  }
+  
+  stopMoving() {
+    this.tween.stop();
   }
   
   updateBounds() {

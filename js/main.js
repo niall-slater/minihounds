@@ -75,6 +75,13 @@ function update() {
   graphics.render();
 }
 
+function getPlayerHounds() {
+  return hounds.filter(
+    function (hound) {
+      return hound.team === playerTeam;
+    });
+}
+
 /* UI output functions */
 
 function updateAllDisplays() {
@@ -164,7 +171,10 @@ function addMessageAscii(arr) {
 
 function sendCommand() {
   var command = input.console.value;
+  input.lastCommand = command;
+  input.console.value = '';
   addMessage(command);
+  parseCommand(command);
 }
 
 /*--------------------*/
@@ -244,7 +254,7 @@ function parseBool (str) {
 /* EVENT LISTENERS
 /*--------------------*/
 
-$('#console-input').keydown(function(e) {
+$('#input-console').keydown(function(e) {
   var context = this;
   // Enter pressed
   if(e.which == 10 || e.which == 13) {
