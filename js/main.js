@@ -4,6 +4,8 @@ var map;
 var hounds = [];
 var projectiles = [];
 var impacts = [];
+var trailDots = [];
+
 var playerTeam = 0;
 
 var settings = {
@@ -26,7 +28,17 @@ var output = {
   planetList: undefined
 };
 
-var seed = [13, 1, 3231, 4, 5, 6, 3, 1, 23, 4, 5, 6, 3, 1, 23, 4, 5, 6, 3, 1, 23, 4, 5, 6];
+var seed = [13, 1, 23, 4, 5, 6,
+            13, 1, 23, 4, 5, 6,
+            13, 1, 23, 4, 5, 6,
+            13, 1, 23, 4, 5, 6];
+
+for (var i = 0; i < 44; i++) {
+  seed[i] = Math.random() * 2000;
+}
+
+console.log(seed);
+
 var voronoiDensity = seed.length / 2;
 
 $( document ).ready(function() {
@@ -52,7 +64,7 @@ function start() {
   map = new Map(seed);
   hounds.push(new Hound(1, 'achilles', {x: 550, y: 950}, 0));
   hounds.push(new Hound(2, 'patroclus', {x: 450, y: 950}, 0));
-  hounds.push(new Hound(3, 'hector', {x: 50, y: 150 }, 1));
+  hounds.push(new Hound(3, 'hector', {x: 450, y: 650 }, 1));
   hounds.push(new Hound(4, 'priam', {x: 150,  y: 50}, 1));
   hounds.push(new Hound(5, 'helen', {x: 250,  y: 150}, 1));
 }
@@ -68,12 +80,24 @@ function update() {
 
   map.update();
   
-  hounds.forEach(function(hound){hound.update();});
-  projectiles.forEach(function(projectile){projectile.update();});
-  impacts.forEach(function(impact){impact.update();});
+  hounds.forEach(function(h){h.update();});
+  projectiles.forEach(function(p){p.update();});
+  impacts.forEach(function(i){i.update();});
+  trailDots.forEach(function(t){t.update();});
+  
+  hounds = removeDead(hounds);
+  projectiles = removeDead(projectiles);
+  impacts = removeDead(impacts);
+  trailDots = removeDead(trailDots);
   
   //render updated graphics
   graphics.render();
+}
+
+function removeDead(array) {
+  return array.filter(function (element) {
+    return element.alive;
+  });
 }
 
 function getPlayerHounds() {

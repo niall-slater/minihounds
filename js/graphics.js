@@ -41,6 +41,9 @@ var graphics = {
     //Render projectiles
     projectiles.forEach(function(p){p.render()});
     
+    //Render traildots
+    trailDots.forEach(function(t){t.render()});
+    
     //Render impacts
     impacts.forEach(function(i){i.render()});
     

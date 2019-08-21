@@ -11,10 +11,13 @@ var city_names = ["Aberdeen", "Abilene", "Akron", "Albany", "Albuquerque", "Alex
 
 
 var colors_countryside =
-     ['#99e668', '#8ad117', '#1a8add', '#a0a0a0', '#037603'];
+     ['#99e668', '#8ad117', '#1a8add', '#a0a0a0', '#037603', '#c3a044'];
 
 var colors_ocean =
      ['#68e6ba', '#17d1d1', '#3c94d4', '#3bc6ab', '#a9ffff'];
+
+var colors_computer =
+     ['#006500', '#005c00', '#008100', '#00ac00'];
 
 function getRandom(array) {
   var result = array[Math.floor(Math.random() * array.length)];
@@ -50,7 +53,7 @@ class Map {
     //assign colors
     this.regions.forEach(function (poly){
       var color = getRandom(colors_countryside);
-      poly.stroke = '#eeeeff';
+      poly.stroke = '#000';
       poly.fill = color;
       poly.name = getRandom(city_names);
       poly.center = getCenterOfPolygon(poly);

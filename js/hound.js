@@ -20,10 +20,21 @@ class Hound {
     this.stroke = '#fff';
     this.fill = colors_primary[team];
     this.team = team;
-    if (team != playerTeam && false)
-      this.wander();
+    this.ai = team != playerTeam;
+    if (this.ai)
+      this.startAi();
     
     this.updateBounds();
+  }
+  
+  startAi() {
+    if (Math.random() > .5)
+      this.wander();
+    this.thinkInterval = setInterval(this.think, 1000);l
+  }
+  
+  think() {
+    
   }
   
   moveTo(target, nextTask) {
@@ -123,6 +134,7 @@ class Hound {
   
   die() {
     addMessage(this.name + ' DESTROYED');
+    clearInterval(this.thinkInterval);
     this.alive = false;
   }
   
