@@ -30,11 +30,28 @@ class Hound {
   startAi() {
     if (Math.random() > .5)
       this.wander();
-    this.thinkInterval = setInterval(this.think, 1000);l
+    var me = this;
+    this.think();
+    this.thinkInterval = setInterval(function(){me.think();}, 3000);
   }
   
   think() {
+    var me = this;
     
+    var playerHoundsInRange = hounds.filter(function (hound) {
+      return hound.team == playerTeam;
+    }).filter(function (playerHound) {
+      return distanceBetween(playerHound.pos, me.pos) < me.stats.sightRange;
+    });
+    
+    var target = getRandom(playerHoundsInRange);
+    if (!target)
+      return;
+    
+    if (Math.random() > .5) {
+      this.stopMoving();
+      this.attack(target);
+    }
   }
   
   moveTo(target, nextTask) {
@@ -64,7 +81,8 @@ class Hound {
   }
   
   stopMoving() {
-    this.tween.stop();
+    if (this.tween)
+      this.tween.stop();
   }
   
   updateBounds() {
@@ -119,7 +137,6 @@ class Hound {
   }
   
   inSightRange() {
-
     var playerHounds = hounds.filter(function (hound) {
       return hound.team == playerTeam;
     });
