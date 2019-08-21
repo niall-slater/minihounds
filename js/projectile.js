@@ -18,19 +18,19 @@ class Projectile {
     
     this.updateBounds();
     
-    this.moveTo([target.pos.x, target.pos.y]);
+    this.moveTo(target.pos);
   }
   
   moveTo(moveTarget) {
     var projectile = this;
     var coords = { x: this.pos.x, y: this.pos.y };
-    var xdiff = this.pos.x - moveTarget[0];
-    var ydiff = this.pos.y - moveTarget[1];
+    var xdiff = this.pos.x - moveTarget.x;
+    var ydiff = this.pos.y - moveTarget.y;
     var distance = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
     var travelTime = distance / (this.stats.speed / 100);
 
     var tween = new TWEEN.Tween(coords)
-            .to({ x: moveTarget[0] - 4, y: moveTarget[1] - 4 }, travelTime)
+            .to(moveTarget, travelTime)
             .onUpdate(function(object) {
               projectile.pos.x = coords.x;
               projectile.pos.y = coords.y;

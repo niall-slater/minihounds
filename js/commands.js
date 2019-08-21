@@ -26,8 +26,8 @@ function parseCommand(command) {
       var y = parseInt(movement[1]);
       console.log(x, y);
       var moveCommand = 
-          [subject.pos.x + x,
-           subject.pos.y + y];
+          {x: subject.pos.x + x,
+           y: subject.pos.y + y};
       subject.moveTo(moveCommand);
       break;
     }

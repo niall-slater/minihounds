@@ -29,16 +29,16 @@ class Hound {
   moveTo(target, nextTask) {
     if (this.tween)
       this.tween.stop();
-    //Target is an array like [x, y]
+    //Target is an object like {x: 5, y: 5}
     if (this.team === playerTeam)
       addMessage(this.name + " moving to " + target);
     var hound = this;
     var coords = { x: this.pos.x, y: this.pos.y };
-    var distance = distanceBetween(this.pos, {x: target[0], y: target[1]});
+    var distance = distanceBetween(this.pos, target);
     var travelTime = distance / (this.stats.speed / 100);
 
     this.tween = new TWEEN.Tween(coords)
-      .to({ x: target[0] - 4, y: target[1] - 4 }, travelTime)
+      .to(target, travelTime)
       .onUpdate(function(object) {
         hound.pos.x = coords.x;
         hound.pos.y = coords.y;
@@ -122,7 +122,7 @@ class Hound {
   }
   
   wander() {
-    var target = [Math.random() * settings.gameWidth, Math.random() * settings.gameHeight/2];
+    var target = {x: Math.random() * settings.gameWidth, y: Math.random() * settings.gameHeight/2};
     var repeat = function(hound) {hound.wander();}
     this.moveTo(target, repeat);
   }
