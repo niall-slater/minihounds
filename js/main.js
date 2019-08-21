@@ -10,7 +10,8 @@ var playerTeam = 0;
 
 var settings = {
   gameWidth: 1280,
-  gameHeight: 1280
+  gameHeight: 1280,
+  difficulty: 1
 };
 
 var constants = {
@@ -28,18 +29,51 @@ var output = {
   planetList: undefined
 };
 
+var complexity = 44;
+
 var seed = [13, 1, 23, 4, 5, 6,
             13, 1, 23, 4, 5, 6,
             13, 1, 23, 4, 5, 6,
             13, 1, 23, 4, 5, 6];
 
-for (var i = 0; i < 44; i++) {
-  seed[i] = Math.random() * 2000;
+var voronoiDensity;
+
+function createMap() {
+
+  hounds = [];
+  projectiles = [];
+  impacts = [];
+  trailDots = [];
+  
+  for (var i = 0; i < complexity; i++) {
+    seed[i] = Math.random() * 2000;
+  }
+
+  console.log(seed);
+
+  voronoiDensity = seed.length / 2;
+  
+  map = new Map(seed);
+  
+  hounds.push(new Hound(
+    1, 'scout', {x: 550, y: 950}, 0, houndClassStats.scout));
+  hounds.push(new Hound(
+    2, 'soldier', {x: 450, y: 950}, 0, houndClassStats.soldier));
+  hounds.push(new Hound(
+    3, 'artillery', {x: 500, y: 1050}, 0, houndClassStats.artillery));
+  
+  for (var i = 0; i < settings.difficulty; i++) {
+  
+    var randomPos = {x: Math.random() * settings.gameWidth, y: Math.random() * settings.gameHeight / 2 };
+    
+    hounds.push(new Hound(3 + i, 'enemy', randomPos, 1, getRandomProperty(houndClassStats)));
+  }
 }
 
-console.log(seed);
-
-var voronoiDensity = seed.length / 2;
+function getRandomProperty(obj) {
+  var keys = Object.keys(obj)
+  return obj[keys[ keys.length * Math.random() << 0]];
+}
 
 var houndClassStats = {
   scout: {
@@ -49,7 +83,8 @@ var houndClassStats = {
     speed: 6,
     sightRange: 600,
     projectileSpeed: 3,
-    projectileRadius: 20
+    projectileRadius: 20,
+    homingProjectiles: false
   },
   soldier: {
     level: 1,
@@ -58,7 +93,8 @@ var houndClassStats = {
     speed: 3,
     sightRange: 250,
     projectileSpeed: 2,
-    projectileRadius: 45
+    projectileRadius: 45,
+    homingProjectiles: false
   },
   artillery: {
     level: 1,
@@ -67,7 +103,8 @@ var houndClassStats = {
     speed: 1,
     sightRange: 100,
     projectileSpeed: 7,
-    projectileRadius: 100
+    projectileRadius: 100,
+    homingProjectiles: false
   }
 }
 
@@ -90,17 +127,19 @@ function start() {
   
   graphics.init();
   setInterval(update, timeStep);
+  
+  createMap();
+}
 
-  map = new Map(seed);
-  hounds.push(new Hound(
-    1, 'scout', {x: 550, y: 950}, 0, houndClassStats.scout));
-  hounds.push(new Hound(
-    2, 'soldier', {x: 450, y: 950}, 0, houndClassStats.soldier));
-  hounds.push(new Hound(
-    2, 'artillery', {x: 500, y: 1050}, 0, houndClassStats.artillery));
-  hounds.push(new Hound(3, 'hector', {x: 450, y: 650 }, 1));
-  hounds.push(new Hound(4, 'priam', {x: 150,  y: 50}, 1));
-  hounds.push(new Hound(5, 'helen', {x: 250,  y: 150}, 1));
+function win() {
+  addMessage('WAVE CLEARED. REBOOTING...');
+  settings.difficulty++;
+  addMessage('ENTERING WAVE ' + settings.difficulty);
+  createMap();
+}
+
+function lose() {
+  addMessage('ALL HOUNDS LOST. SIMULATION COMPLETE.');
 }
 
 /* Game functions */
@@ -124,8 +163,26 @@ function update() {
   impacts = removeDead(impacts);
   trailDots = removeDead(trailDots);
   
+  checkWinCondition();
+
   //render updated graphics
   graphics.render();
+}
+
+function checkWinCondition() {
+  var playerHounds = hounds.filter(function (hound) {
+    return hound.team == playerTeam;
+  });
+
+  if (playerHounds.length == 0)
+    lose();
+
+  var enemyHounds = hounds.filter(function (hound) {
+    return hound.team != playerTeam;
+  });
+
+  if (enemyHounds.length == 0)
+    win();
 }
 
 function removeDead(array) {

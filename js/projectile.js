@@ -10,7 +10,7 @@ class Projectile {
     this.stats = {
       radius: this.creator.stats.projectileRadius,
       speed: this.creator.stats.projectileSpeed,
-      homing: true
+      homing: this.creator.stats.homingProjectiles
     }
     
     this.stroke = '#fff';
