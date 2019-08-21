@@ -83,9 +83,9 @@ class Hound {
   
   hurt(amount) {
     if (!amount)
-      amount = rollDice(24, 1);
+      return;
     this.stats.hp -= amount;
-    console.log(this.stats.hp);
+    addMessage(amount + " damage to " + this.name + ". " + this.stats.hp + "HP remaining.");
     if (this.stats.hp <= 0) {
       this.stats.hp = 0;
       this.die();
@@ -100,6 +100,11 @@ class Hound {
     graphics.drawPolygon(this.poly, this.stroke, this.fill);
     graphics.drawText(this.name, this.pos.x - 32, this.pos.y + 34, this.fill, 22);
     graphics.drawText(this.name, this.pos.x - 34, this.pos.y + 32, '#fff', 22);
+  }
+  
+  renderSightRange() {
+    graphics.drawCircle(this.pos.x, this.pos.y,
+                        this.stats.sightRange, '#fff');
   }
   
   inSightRange() {

@@ -3,6 +3,7 @@ var map;
 
 var hounds = [];
 var projectiles = [];
+var impacts = [];
 var playerTeam = 0;
 
 var settings = {
@@ -69,6 +70,7 @@ function update() {
   
   hounds.forEach(function(hound){hound.update();});
   projectiles.forEach(function(projectile){projectile.update();});
+  impacts.forEach(function(impact){impact.update();});
   
   //render updated graphics
   graphics.render();

@@ -8,15 +8,13 @@ class Projectile {
     this.alive = true;
     
     this.stats = {
-      radius: 50,
+      radius: 150,
       speed: 6
     }
     
     this.stroke = '#fff';
     this.fill = '#000';
     this.origin = {x: creator.pos.x, y: creator.pos.y};
-    
-    this.updateBounds();
     
     this.moveTo(target.pos);
   }
@@ -43,19 +41,12 @@ class Projectile {
   }
   
   updateBounds() {
-    this.poly = [
-      [this.pos.x - 4, this.pos.y - 4,],
-      [this.pos.x + 0, this.pos.y - 6,],
-      [this.pos.x + 4, this.pos.y - 4,],
-      [this.pos.x + 4, this.pos.y + 4,],
-      [this.pos.x - 4, this.pos.y + 4,]
-    ];
+    
   }
   
   update() {
     if(!this.alive)
       return;
-    this.updateBounds();
   }
   
   onInspect() {
@@ -64,6 +55,8 @@ class Projectile {
   
   impact() {
     //create damage circle
+    var impact = new Impact(this.pos, this.stats.radius);
+    impacts.push(impact);
     this.die();
   }
   
@@ -71,10 +64,64 @@ class Projectile {
     if(!this.alive)
       return;
     graphics.drawLine(this.origin.x, this.origin.y, this.pos.x, this.pos.y, 2, this.creator.fill);
-    graphics.drawPolygon(this.poly, this.stroke, this.fill);
+
+    graphics.drawDot(this.pos.x, this.pos.y, 2, this.fill)
   }
   
   die() {
     this.alive = false;
   }
 }
+
+class Impact {
+  constructor(position, radius) {
+    if (!radius)
+      radius = 100;
+    this.pos = position;
+    this.radius = radius;
+    this.alive = true;
+    
+    this.stroke = '#fff';
+    this.fill = '#ffaa00';
+    
+    this.damageHoundsInside();
+  }
+  
+  damageHoundsInside() {
+    var impact = this;
+    hounds.forEach(function (hound) {
+      if (distanceBetween(hound.pos, impact.pos) < impact.radius)
+        hound.hurt(50);
+    });
+  }
+  
+  update() {
+    if(!this.alive)
+      return;
+    
+    this.updateBounds();
+  }
+  
+  updateBounds() {
+    if (!this.alive)
+      return;
+
+    if (this.radius > 0)
+      this.radius -= timeStep/ 20;
+    else
+      this.die();
+  }
+  
+  render() {
+    if(!this.alive)
+      return;
+    console.log('rendering');
+    graphics.drawCircle(this.pos.x, this.pos.y, this.radius,
+                       this.stroke, this.fill);
+  }
+  
+  die() {
+    this.alive = false;
+  }
+}
+//patroclus attack achilles

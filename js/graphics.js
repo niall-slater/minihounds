@@ -41,13 +41,23 @@ var graphics = {
     //Render projectiles
     projectiles.forEach(function(p){p.render()});
     
-    this.renderSightRange();
+    //Render impacts
+    impacts.forEach(function(i){i.render()});
+    
+    //Render vision circles
+    var playerHounds = hounds.filter(
+      function(hound){return hound.team === playerTeam});
+    playerHounds.forEach(function (hound) {
+      hound.renderSightRange();
+    });
   },
   
-  drawDot: function(x, y, size, label, color, labelColor) {
+  drawDot: function(x, y, size, color, label, labelColor) {
     this.ctx.beginPath();
     this.ctx.setLineDash([0]);
     this.ctx.arc(x, y, size/2, 0, 2 * Math.PI);
+    if (color)
+      this.ctx.strokeStyle = color;
     this.ctx.stroke();
     
     if (label) {
@@ -112,14 +122,19 @@ var graphics = {
     this.ctx.stroke();
   },
   
-  renderSightRange: function() {
-    var playerHounds = hounds.filter(function(hound){return hound.team === playerTeam});
-    playerHounds.forEach(function (hound) {
-      graphics.ctx.beginPath();
-      graphics.ctx.arc(hound.pos.x, hound.pos.y, hound.stats.sightRange,
-              0, 2 * Math.PI);
-      graphics.ctx.stroke();
-    });
+  drawCircle: function(x, y, radius, stroke, fill) {
+    this.ctx.beginPath();
+    this.ctx.arc(
+      x, y, radius, 0, 2 * Math.PI);
+    this.ctx.fillStyle = this.fill;
+    if (!stroke)
+      stroke = '#fff';
+    this.ctx.strokeStyle = stroke;
+    this.ctx.stroke();
+    
+    this.ctx.fillStyle = fill;
+    if (fill)
+      this.ctx.fill();
   }
 }
 
