@@ -1,5 +1,5 @@
 class Hound {
-  constructor(id, name, position, team) {
+  constructor(id, name, position, team, stats) {
     this.id = id;
     this.name = name;
     this.pos = position;
@@ -9,13 +9,10 @@ class Hound {
     
     var level = 1 + rollDie(20);
     
-    this.stats = {
-      level: level,
-      hp: 6 + rollDice(6, level),
-      ac: 6 + rollDice(4, Math.floor(level/4)),
-      speed: 3,
-      sightRange: 350
-    }
+    if (!stats) {
+      this.stats = houndClassStats.soldier;
+    } else
+      this.stats = stats;
     
     this.stroke = '#fff';
     this.fill = colors_primary[team];

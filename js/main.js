@@ -41,6 +41,36 @@ console.log(seed);
 
 var voronoiDensity = seed.length / 2;
 
+var houndClassStats = {
+  scout: {
+    level: 1,
+    hp: 6 + rollDice(6, 1),
+    ac: 6 + rollDice(4, 1),
+    speed: 6,
+    sightRange: 600,
+    projectileSpeed: 3,
+    projectileRadius: 20
+  },
+  soldier: {
+    level: 1,
+    hp: 6 + rollDice(6, 1),
+    ac: 6 + rollDice(4, 1),
+    speed: 3,
+    sightRange: 250,
+    projectileSpeed: 2,
+    projectileRadius: 45
+  },
+  artillery: {
+    level: 1,
+    hp: 6 + rollDice(6, 1),
+    ac: 6 + rollDice(4, 1),
+    speed: 1,
+    sightRange: 100,
+    projectileSpeed: 7,
+    projectileRadius: 100
+  }
+}
+
 $( document ).ready(function() {
   setUpElementReferences();
   start();
@@ -62,8 +92,12 @@ function start() {
   setInterval(update, timeStep);
 
   map = new Map(seed);
-  hounds.push(new Hound(1, 'achilles', {x: 550, y: 950}, 0));
-  hounds.push(new Hound(2, 'patroclus', {x: 450, y: 950}, 0));
+  hounds.push(new Hound(
+    1, 'scout', {x: 550, y: 950}, 0, houndClassStats.scout));
+  hounds.push(new Hound(
+    2, 'soldier', {x: 450, y: 950}, 0, houndClassStats.soldier));
+  hounds.push(new Hound(
+    2, 'artillery', {x: 500, y: 1050}, 0, houndClassStats.artillery));
   hounds.push(new Hound(3, 'hector', {x: 450, y: 650 }, 1));
   hounds.push(new Hound(4, 'priam', {x: 150,  y: 50}, 1));
   hounds.push(new Hound(5, 'helen', {x: 250,  y: 150}, 1));

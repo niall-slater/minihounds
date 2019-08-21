@@ -8,8 +8,8 @@ class Projectile {
     this.alive = true;
     
     this.stats = {
-      radius: 50,
-      speed: 6,
+      radius: this.creator.stats.projectileRadius,
+      speed: this.creator.stats.projectileSpeed,
       homing: true
     }
     
