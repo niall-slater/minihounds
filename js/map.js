@@ -40,17 +40,19 @@ class Map {
 
     voronoi.size([this.height, this.width]);
     //generate map using voronoi diagrams
-    var v = voronoi(voronoiPoints);
-    console.log(v);
-    this.mapData = v;
-    //TODO: add region data to v.cells so we can look them up by coords
-    this.regions = v.polygons();
-    this.regions = this.regions.map(function (polygon) {
+    this.mapData = voronoi(voronoiPoints);
+    var regions = this.mapData.polygons();
+    regions = regions.map(function (polygon) {
       return polygon.filter(function (point) {
         if (point)
           return point;
       });
     });
+    //TODO: add region data to v.cells so we can look them up by coords
+    for (var i = 0; i < this.mapData.cells.length; i++) {
+      cells[i].region = regions[i];
+    }
+    this.regions = this.mapData.polygons();
 
     //assign colors
     this.regions.forEach(function (poly){
