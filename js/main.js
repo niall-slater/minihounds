@@ -44,7 +44,7 @@ function createMap() {
   projectiles = [];
   impacts = [];
   trailDots = [];
-  
+
   for (var i = 0; i < complexity; i++) {
     seed[i] = Math.random() * 2000;
   }
@@ -52,20 +52,18 @@ function createMap() {
   console.log(seed);
 
   voronoiDensity = seed.length / 2;
-  
+
   map = new Map(seed);
-  
+
   hounds.push(new Hound(
     1, 'scout', {x: 550, y: 950}, 0, houndClassStats.scout));
   hounds.push(new Hound(
     2, 'soldier', {x: 450, y: 950}, 0, houndClassStats.soldier));
   hounds.push(new Hound(
     3, 'artillery', {x: 500, y: 1050}, 0, houndClassStats.artillery));
-  
+
   for (var i = 0; i < settings.difficulty; i++) {
-  
     var randomPos = {x: Math.random() * settings.gameWidth, y: Math.random() * settings.gameHeight / 2 };
-    
     hounds.push(new Hound(3 + i, 'enemy', randomPos, 1, getRandomProperty(houndClassStats)));
   }
 }
@@ -73,39 +71,6 @@ function createMap() {
 function getRandomProperty(obj) {
   var keys = Object.keys(obj)
   return obj[keys[ keys.length * Math.random() << 0]];
-}
-
-var houndClassStats = {
-  scout: {
-    level: 1,
-    hp: 6 + rollDice(6, 1),
-    ac: 6 + rollDice(4, 1),
-    speed: 6,
-    sightRange: 600,
-    projectileSpeed: 3,
-    projectileRadius: 20,
-    homingProjectiles: false
-  },
-  soldier: {
-    level: 1,
-    hp: 6 + rollDice(6, 1),
-    ac: 6 + rollDice(4, 1),
-    speed: 3,
-    sightRange: 250,
-    projectileSpeed: 2,
-    projectileRadius: 45,
-    homingProjectiles: false
-  },
-  artillery: {
-    level: 1,
-    hp: 6 + rollDice(6, 1),
-    ac: 6 + rollDice(4, 1),
-    speed: 1,
-    sightRange: 100,
-    projectileSpeed: 7,
-    projectileRadius: 100,
-    homingProjectiles: false
-  }
 }
 
 $( document ).ready(function() {
@@ -124,10 +89,8 @@ function setUpElementReferences() {
 }
 
 function start() {
-  
   graphics.init();
   setInterval(update, timeStep);
-  
   createMap();
 }
 
@@ -152,17 +115,17 @@ function update() {
   updateAllDisplays();
 
   map.update();
-  
+
   hounds.forEach(function(h){h.update();});
   projectiles.forEach(function(p){p.update();});
   impacts.forEach(function(i){i.update();});
   trailDots.forEach(function(t){t.update();});
-  
+
   hounds = removeDead(hounds);
   projectiles = removeDead(projectiles);
   impacts = removeDead(impacts);
   trailDots = removeDead(trailDots);
-  
+
   checkWinCondition();
 
   //render updated graphics
@@ -201,7 +164,7 @@ function getPlayerHounds() {
 /* UI output functions */
 
 function updateAllDisplays() {
-  
+
 }
 
 /*--------------------*/
@@ -221,10 +184,10 @@ function addMessage(text, color, delay, includesDonger) {
   if (includesDonger) {
     li.classList += 'donger';
   }
-  
+
   if (!delay)
     delay = 0;
-  
+
   setTimeout(function() {
     output.console.appendChild(li);
     output.console.parentElement.scrollTop = output.console.parentElement.scrollHeight;
@@ -236,17 +199,17 @@ function addMessageWithLink(linkText, url, delay) {
   if (output.numMessages >= constants.maxMessages) {
     output.console.removeChild(output.console.firstChild);
   }
-  
+
   var li = document.createElement("li");
   var linkElement = document.createElement("a");
   linkElement.textContent = linkText;
   $(linkElement).attr('href', url);
   $(linkElement).attr('target', '_blank');
   li.appendChild(linkElement);
-  
+
   if (!delay)
     delay = 0;
-  
+
   setTimeout(function() {
     output.console.appendChild(li);
     output.console.parentElement.scrollTop = output.console.parentElement.scrollHeight;
@@ -255,11 +218,11 @@ function addMessageWithLink(linkText, url, delay) {
 }
 
 function addMessageImage(imageSrc, url, delay) {
-  
+
   if (output.numMessages >= constants.maxMessages) {
     output.console.removeChild(output.console.firstChild);
   }
-  
+
   var li = document.createElement("li");
   var a = document.createElement("a");
   var img = document.createElement("img");
@@ -268,10 +231,10 @@ function addMessageImage(imageSrc, url, delay) {
   $(a).attr('target', '_blank');
   li.appendChild(a);
   a.appendChild(img);
-  
+
   if (!delay)
     delay = 0;
-  
+
   setTimeout(function() {
     output.console.appendChild(li);
     output.console.parentElement.scrollTop = output.console.parentElement.scrollHeight;
@@ -300,7 +263,7 @@ function sendCommand() {
 function saveData() {
   var statsData = stats;
   var skillsData = skills;
-  
+
   setCookie('statsData', statsData);
   setCookie('skillsData', skillsData);
 }
@@ -311,22 +274,22 @@ function loadData() {
 
   if (!statsData || !skillsData)
     return;
-  
+
   stats.age = parseInt(statsData.age);
   stats.name = statsData.name;
   stats.power = parseInt(statsData.power);
   stats.calculations = parseInt(statsData.calculations);
   stats.children = parseInt(statsData.children);
   stats.funding = parseInt(statsData.funding);
-  
+
   skills.power = parseInt(skillsData.power);
   skills.speed = parseInt(skillsData.speed);
   skills.networking = parseInt(skillsData.networking);
   skills.negotiation = parseInt(skillsData.negotiation);
-  
+
   skills.autocalc = parseBool(skillsData.calculations);
   skills.autofeed = parseBool(skillsData.calculations);
-  
+
   for (var i = 0; i < stats.children; i++) {
     addChildDisplay();
   }
@@ -344,7 +307,6 @@ function clearData() {
 
 function setCookie(name, value) {
   var cookie = [name, '=', JSON.stringify(value), '; domain=.', window.location.host.toString(), '; path=/;'].join('');
-  
   cookie += "expires=Sat, 25 Dec 2021 12:00:00 UTC;";
   document.cookie = cookie;
 }
@@ -386,7 +348,7 @@ $('#input-console').keydown(function(e) {
 function disableInput(duration){
   input.enabled = false;
   $('button').addClass('disabled');
-  
+
   if (duration){
     setTimeout(enableInput, duration);
   }
