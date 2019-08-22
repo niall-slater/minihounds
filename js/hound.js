@@ -3,27 +3,27 @@ class Hound {
     this.id = id;
     this.name = name;
     this.pos = position;
-    
+
     this.visible = false;
     this.alive = true;
-    
+
     var level = 1 + rollDie(20);
-    
+
     if (!stats) {
       this.stats = houndClassStats.soldier;
     } else
       this.stats = stats;
-    
+
     this.stroke = '#fff';
     this.fill = colors_primary[team];
     this.team = team;
     this.ai = team != playerTeam;
     if (this.ai)
       this.startAi();
-    
+
     this.updateBounds();
   }
-  
+
   startAi() {
     if (Math.random() > .5)
       this.wander();
@@ -31,27 +31,28 @@ class Hound {
     this.think();
     this.thinkInterval = setInterval(function(){me.think();}, 3000);
   }
-  
+
   think() {
     var me = this;
-    
+
     var playerHoundsInRange = hounds.filter(function (hound) {
       return hound.team == playerTeam;
     }).filter(function (playerHound) {
       return distanceBetween(playerHound.pos, me.pos) < me.stats.sightRange;
     });
-    
+
     var target = getRandom(playerHoundsInRange);
     if (!target)
       return;
-    
+
     if (Math.random() > .5) {
       this.stopMoving();
       this.attack(target);
     }
   }
-  
+
   moveTo(target, nextTask) {
+    console.log(map.getRegionAt(target.x, target.y));
     if (this.tween)
       this.tween.stop();
     //Target is an object like {x: 5, y: 5}
@@ -76,12 +77,12 @@ class Hound {
       })
       .start();
   }
-  
+
   stopMoving() {
     if (this.tween)
       this.tween.stop();
   }
-  
+
   updateBounds() {
     this.poly = [
       [this.pos.x - 10, this.pos.y + 10],
@@ -89,24 +90,24 @@ class Hound {
       [this.pos.x + 10, this.pos.y + 10]
     ];
   }
-  
+
   update() {
     if (!this.alive)
       return;
     this.updateBounds();
   }
-  
+
   onInspect() {
     addMessage(this.name + ": lvl" + this.stats.level, colors.text);
   }
-  
+
   say(phrase) {
     if (!this.alive)
       return;
 
     addMessage(this.name + " says: '" + phrase + "'");
   }
-  
+
   hurt(amount) {
     if (!amount)
       return;
@@ -117,7 +118,7 @@ class Hound {
       this.die();
     }
   }
-  
+
   render() {
     if (!this.alive)
       return;
@@ -127,12 +128,12 @@ class Hound {
     graphics.drawText(this.name, this.pos.x - 32, this.pos.y + 34, this.fill, 22);
     graphics.drawText(this.name, this.pos.x - 34, this.pos.y + 32, '#fff', 22);
   }
-  
+
   renderSightRange() {
     graphics.drawCircle(this.pos.x, this.pos.y,
                         this.stats.sightRange, '#fff');
   }
-  
+
   inSightRange() {
     var playerHounds = hounds.filter(function (hound) {
       return hound.team == playerTeam;
@@ -145,19 +146,19 @@ class Hound {
 
     return false;
   }
-  
+
   die() {
     addMessage(this.name + ' DESTROYED');
     clearInterval(this.thinkInterval);
     this.alive = false;
   }
-  
+
   wander() {
     var target = {x: Math.random() * settings.gameWidth, y: Math.random() * settings.gameHeight/2};
     var repeat = function(hound) {hound.wander();}
     this.moveTo(target, repeat);
   }
-  
+
   attack(target) {
     projectiles.push(new Projectile(this, target));
     addMessage(this.name + ' WEAPON DISCHARGE');

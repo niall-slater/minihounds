@@ -27,21 +27,23 @@ function getRandom(array) {
 class Map {
   constructor(givenSeed) {
     this.seed = givenSeed;
-    
+
     this.height = settings.gameHeight;
     this.width = settings.gameWidth;
-    
+
     var voronoiPoints = [];
     for (var i = 0; i < voronoiDensity; i++) {
       var x = randomWithSeed(this.seed[i]) * this.width;
       var y = randomWithSeed(this.seed[i + 1]) * this.height;
       voronoiPoints.push([x, y]);
     }
-    
-    
+
     voronoi.size([this.height, this.width]);
     //generate map using voronoi diagrams
     var v = voronoi(voronoiPoints);
+    console.log(v);
+    this.mapData = v;
+    //TODO: add region data to v.cells so we can look them up by coords
     this.regions = v.polygons();
     this.regions = this.regions.map(function (polygon) {
       return polygon.filter(function (point) {
@@ -49,7 +51,7 @@ class Map {
           return point;
       });
     });
-    
+
     //assign colors
     this.regions.forEach(function (poly){
       var color = getRandom(colors_countryside);
@@ -58,16 +60,16 @@ class Map {
       poly.name = getRandom(city_names);
       poly.center = getCenterOfPolygon(poly);
     });
-    
+
     //define areas as polygons
   }
-  
+
   update() {
-    
+
   }
-  
+
   getRegionAt(x, y) {
-    return ;
+    return this.mapData.find(x, y);
   }
 }
 
