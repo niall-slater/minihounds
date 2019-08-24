@@ -1,32 +1,32 @@
 var terrainTypes = [
   {
-    name: 'plains',
-    movement: 5,
-    defence: 1,
+    name: 'Plains',
+    movecost: .1,
+    defence: .1,
     color: '#8ad117'
   },
   {
-    name: 'farmland',
-    movement: 4,
-    defence: 2,
+    name: 'Farm',
+    movecost: .2,
+    defence: .2,
     color: '#c3a044'
   },
   {
-    name: 'woods',
-    movement: 3,
-    defence: 3,
+    name: 'Woods',
+    movecost: .3,
+    defence: .3,
     color: '#037603'
   },
   {
-    name: 'lake',
-    movement: 2,
-    defence: 4,
+    name: 'Lake',
+    movecost: .4,
+    defence: .4,
     color: '#1a8add'
   },
   {
-    name: 'rocky',
-    movement: 1,
-    defence: 5,
+    name: 'Mountains',
+    movecost: .5,
+    defence: .5,
     color: '#a0a0a0'
   }
 ];

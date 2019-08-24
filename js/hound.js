@@ -67,7 +67,7 @@ class Hound {
       .to(target, travelTime)
       .onUpdate(function(object) {
         var movementModifier =
-            map.getRegionAt(hound.pos.x, hound.pos.y).movement;
+            map.getRegionAt(hound.pos.x, hound.pos.y).movecost;
         hound.pos.x = coords.x;
         hound.pos.y = coords.y;
       })
@@ -114,6 +114,8 @@ class Hound {
     if (!amount)
       return;
     this.stats.hp -= amount;
+    var terrainCover = map.getRegionAt(this.pos.x, this.pos. y).defence;
+    amount *= 1-terrainCover;
     addMessage(amount + " damage to " + this.name + ". " + this.stats.hp + "HP remaining.");
     if (this.stats.hp <= 0) {
       this.stats.hp = 0;

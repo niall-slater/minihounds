@@ -27,12 +27,12 @@ var graphics = {
     });
     
     map.mapData.cells.forEach(function (cell){
-      graphics.drawText(cell.region.name, 
-                        cell.region.center[0] - 50 + 2,
-                        cell.region.center[1] + 2, '#000');
-      graphics.drawText(cell.region.name, 
-                        cell.region.center[0] - 50,
-                        cell.region.center[1]);
+      graphics.drawText(cell.region.name + " " + cell.region.type, 
+                        cell.region.center[0] - 100 + 2,
+                        cell.region.center[1] + 2, '#000', 24);
+      graphics.drawText(cell.region.name + " " + cell.region.type, 
+                        cell.region.center[0] - 100,
+                        cell.region.center[1], '#fff', 24);
     });
     
     //Render hounds
