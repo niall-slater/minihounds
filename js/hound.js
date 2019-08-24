@@ -52,12 +52,12 @@ class Hound {
   }
 
   moveTo(target, nextTask) {
-    console.log(map.getRegionAt(target.x, target.y));
+    var targetRegion = map.getRegionAt(target.x, target.y);
     if (this.tween)
       this.tween.stop();
     //Target is an object like {x: 5, y: 5}
     if (this.team === playerTeam)
-      addMessage(this.name + " moving to " + target.x + ", " + target.y);
+      addMessage(this.name + " moving to " + targetRegion.name);
     var hound = this;
     var coords = { x: this.pos.x, y: this.pos.y };
     var distance = distanceBetween(this.pos, target);
@@ -66,6 +66,8 @@ class Hound {
     this.tween = new TWEEN.Tween(coords)
       .to(target, travelTime)
       .onUpdate(function(object) {
+        var movementModifier =
+            map.getRegionAt(hound.pos.x, hound.pos.y).movement;
         hound.pos.x = coords.x;
         hound.pos.y = coords.y;
       })
