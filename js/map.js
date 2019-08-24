@@ -1,17 +1,37 @@
 var terrainTypes = [
-  'plains',
-  'desert',
-  'forest',
-  'mountains',
-  'river',
-  'tundra'
+  {
+    name: 'plains',
+    movement: 5,
+    defence: 1,
+    color: '#8ad117'
+  },
+  {
+    name: 'farmland',
+    movement: 4,
+    defence: 2,
+    color: '#c3a044'
+  },
+  {
+    name: 'woods',
+    movement: 3,
+    defence: 3,
+    color: '#037603'
+  },
+  {
+    name: 'lake',
+    movement: 2,
+    defence: 4,
+    color: '#1a8add'
+  },
+  {
+    name: 'rocky',
+    movement: 1,
+    defence: 5,
+    color: '#a0a0a0'
+  }
 ];
 
 var city_names = ["Aberdeen", "Abilene", "Akron", "Albany", "Albuquerque", "Alexandria", "Allentown", "Amarillo", "Anaheim", "Anchorage", "Ann Arbor", "Antioch", "Apple Valley", "Appleton", "Arlington", "Arvada", "Asheville", "Athens", "Atlanta", "Atlantic City", "Augusta", "Aurora", "Austin", "Bakersfield", "Baltimore", "Barnstable", "Baton Rouge", "Beaumont", "Bel Air", "Bellevue", "Berkeley", "Bethlehem", "Billings", "Birmingham", "Bloomington", "Boise", "Boise City", "Bonita Springs", "Boston", "Boulder", "Bradenton", "Bremerton", "Bridgeport", "Brighton", "Brownsville", "Bryan", "Buffalo", "Burbank", "Burlington", "Cambridge", "Canton", "Cape Coral", "Carrollton", "Cary", "Cathedral City", "Cedar Rapids", "Champaign", "Chandler", "Charleston", "Charlotte", "Chattanooga", "Chesapeake", "Chicago", "Chula Vista", "Cincinnati", "Clarke County", "Clarksville", "Clearwater", "Cleveland", "College Station", "Colorado Springs", "Columbia", "Columbus", "Concord", "Coral Springs", "Corona", "Corpus Christi", "Costa Mesa", "Dallas", "Daly City", "Danbury", "Davenport", "Davidson County", "Dayton", "Daytona Beach", "Deltona", "Denton", "Denver", "Des Moines", "Detroit", "Downey", "Duluth", "Durham", "El Monte", "El Paso", "Elizabeth", "Elk Grove", "Elkhart", "Erie", "Escondido", "Eugene", "Evansville", "Fairfield", "Fargo", "Fayetteville", "Fitchburg", "Flint", "Fontana", "Fort Collins", "Fort Lauderdale", "Fort Smith", "Fort Walton Beach", "Fort Wayne", "Saint Louis", "Saint Paul", "Saint Petersburg", "Salem", "Salinas", "Salt Lake City", "San Antonio", "San Bernardino", "San Buenaventura", "San Diego", "San Francisco", "San Jose", "Santa Ana", "Santa Barbara", "Santa Clara", "Santa Clarita", "Santa Cruz", "Santa Maria", "Santa Rosa", "Sarasota", "Savannah", "Scottsdale", "Scranton", "Seaside", "Seattle", "Sebastian", "Shreveport", "Simi Valley", "Sioux City", "Sioux Falls", "South Bend", "South Lyon", "Spartanburg", "Spokane", "Springdale", "Springfield", "St. Louis", "St. Paul", "St. Petersburg", "Stamford", "Sterling Heights", "Stockton", "Sunnyvale", "Syracuse", "Tacoma", "Tallahassee", "Tampa", "Temecula", "Tempe", "Thornton", "Thousand Oaks", "Toledo", "Topeka", "Torrance", "Trenton", "Tucson", "Tulsa", "Tuscaloosa", "Tyler", "Utica", "Vallejo", "Vancouver", "Vero Beach", "Victorville", "Virginia Beach", "Visalia", "Waco", "Warren", "Washington", "Waterbury", "Waterloo", "West Covina", "West Valley City", "Westminster", "Wichita", "Wilmington", "Winston", "Winter Haven", "Worcester", "Yakima", "Yonkers", "York", "Youngstown"];
-
-
-var colors_countryside =
-     ['#99e668', '#8ad117', '#1a8add', '#a0a0a0', '#037603', '#c3a044'];
 
 var colors_ocean =
      ['#68e6ba', '#17d1d1', '#3c94d4', '#3bc6ab', '#a9ffff'];
@@ -48,22 +68,26 @@ class Map {
           return point;
       });
     });
-    //TODO: add region data to v.cells so we can look them up by coords
-    for (var i = 0; i < this.mapData.cells.length; i++) {
-      cells[i].region = regions[i];
-    }
-    this.regions = this.mapData.polygons();
 
-    //assign colors
-    this.regions.forEach(function (poly){
-      var color = getRandom(colors_countryside);
+    //assign region properties
+    regions.forEach(function (poly) {
+      var type = getFromArrayWithSeed(terrainTypes, seed[0]);
+      var type = getRandom(terrainTypes);
+
       poly.stroke = '#000';
-      poly.fill = color;
-      poly.name = getRandom(city_names);
+      poly.type = type.name;
+      poly.fill = type.color;
+      poly.movement = type.movement;
+      poly.defence = type.defence;
+      poly.name = getFromArrayWithSeed(city_names, seed[1]);
       poly.center = getCenterOfPolygon(poly);
     });
-
-    //define areas as polygons
+    
+    for (var i = 0; i < this.mapData.cells.length; i++) {
+      this.mapData.cells[i].region = regions[i];
+    }
+    this.regions = this.mapData.polygons();
+    console.log('Mapdata:', this.mapData);
   }
 
   update() {
@@ -73,6 +97,13 @@ class Map {
   getRegionAt(x, y) {
     return this.mapData.find(x, y);
   }
+}
+
+function getFromArrayWithSeed(array, seed) {
+  var x = Math.sin(seed++) * 10000;
+  var selector = x - Math.floor(x);
+  var result = array[Math.floor(selector * array.length)];
+  return result;
 }
 
 function randomWithSeed(seed) {

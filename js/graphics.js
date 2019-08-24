@@ -22,17 +22,17 @@ var graphics = {
     this.ctx.fillStyle = '#000';
     this.ctx.fill();
     this.ctx.fillStyle = "#00FF00";
-    map.regions.forEach(function (region){
-      graphics.drawPolygon(region, region.stroke, region.fill);
+    map.mapData.cells.forEach(function (cell){
+      graphics.drawPolygon(cell.region, cell.region.stroke, cell.region.fill);
     });
     
-    map.regions.forEach(function (region){
-      graphics.drawText(region.name, 
-                        region.center[0] - 50 + 2,
-                        region.center[1] + 2, '#000');
-      graphics.drawText(region.name, 
-                        region.center[0] - 50,
-                        region.center[1]);
+    map.mapData.cells.forEach(function (cell){
+      graphics.drawText(cell.region.name, 
+                        cell.region.center[0] - 50 + 2,
+                        cell.region.center[1] + 2, '#000');
+      graphics.drawText(cell.region.name, 
+                        cell.region.center[0] - 50,
+                        cell.region.center[1]);
     });
     
     //Render hounds
@@ -126,6 +126,8 @@ var graphics = {
   },
   
   drawCircle: function(x, y, radius, stroke, fill) {
+    if (radius < 0)
+      return;
     this.ctx.beginPath();
     this.ctx.arc(
       x, y, radius, 0, 2 * Math.PI);

@@ -83,8 +83,6 @@ function createMap() {
     seed[i] = Math.random() * 2000;
   }
 
-  console.log(seed);
-
   voronoiDensity = seed.length / 2;
 
   map = new Map(seed);

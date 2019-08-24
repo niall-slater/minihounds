@@ -24,7 +24,6 @@ function parseCommand(command) {
       var subject = getNamedPlayerHound(name);
       var x = parseInt(movement[0]);
       var y = parseInt(movement[1]);
-      console.log(x, y);
       var moveCommand = 
           {x: subject.pos.x + x,
            y: subject.pos.y + y};

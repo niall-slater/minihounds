@@ -57,7 +57,7 @@ class Hound {
       this.tween.stop();
     //Target is an object like {x: 5, y: 5}
     if (this.team === playerTeam)
-      addMessage(this.name + " moving to " + target);
+      addMessage(this.name + " moving to " + target.x + ", " + target.y);
     var hound = this;
     var coords = { x: this.pos.x, y: this.pos.y };
     var distance = distanceBetween(this.pos, target);
