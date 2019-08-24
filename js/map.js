@@ -52,13 +52,13 @@ class Map {
     this.width = settings.gameWidth;
 
     var voronoiPoints = [];
+
+    voronoi.size([this.height, this.width]);
     for (var i = 0; i < voronoiDensity; i++) {
       var x = randomWithSeed(this.seed[i]) * this.width;
       var y = randomWithSeed(this.seed[i + 1]) * this.height;
       voronoiPoints.push([x, y]);
     }
-
-    voronoi.size([this.height, this.width]);
     //generate map using voronoi diagrams
     this.mapData = voronoi(voronoiPoints);
     var regions = this.mapData.polygons();
