@@ -1,9 +1,13 @@
+var houndMovementMultiplier = 0.01;
+
 class Hound {
   constructor(id, name, position, team, stats) {
     this.id = id;
     this.name = name;
     this.pos = position;
-
+    this.movement = {x: 0, y: 0};
+    this.moveTarget = null;
+    
     this.visible = false;
     this.alive = true;
 
@@ -53,36 +57,23 @@ class Hound {
 
   moveTo(target, nextTask) {
     var targetRegion = map.getRegionAt(target.x, target.y);
-    if (this.tween)
-      this.tween.stop();
-    //Target is an object like {x: 5, y: 5}
-    if (this.team === playerTeam)
-      addMessage(this.name + " moving to " + targetRegion.name);
-    var hound = this;
-    var coords = { x: this.pos.x, y: this.pos.y };
-    var distance = distanceBetween(this.pos, target);
-    var travelTime = distance / (this.stats.speed / 100);
+    this.moveTarget = target;
+    
+    var dx, dy;
+    dx = target.x - this.pos.x;
+    dy = target.y - this.pos.y;
+    var angle = Math.atan2(dy, dx);
+    var xVelocity, yVelocity;
+    xVelocity = this.stats.speed * Math.cos(angle);
+    yVelocity = this.stats.speed * Math.sin(angle);
 
-    this.tween = new TWEEN.Tween(coords)
-      .to(target, travelTime)
-      .onUpdate(function(object) {
-        var movementModifier =
-            map.getRegionAt(hound.pos.x, hound.pos.y).movecost;
-        hound.pos.x = coords.x;
-        hound.pos.y = coords.y;
-      })
-      .onComplete(() => {
-        if (nextTask) {
-          nextTask(this);
-        }
-        this.tween = null;
-      })
-      .start();
+    this.movement = {x: xVelocity, y: yVelocity};
   }
 
   stopMoving() {
-    if (this.tween)
-      this.tween.stop();
+    this.moveTarget = null;
+    this.movement.x = 0;
+    this.movement.y = 0;
   }
 
   updateBounds() {
@@ -92,11 +83,23 @@ class Hound {
       [this.pos.x + 10, this.pos.y + 10]
     ];
   }
+  
+  updateMovement() {
+    if (!this.moveTarget)
+      return;
+    
+    this.pos.x += this.movement.x * timeStep * houndMovementMultiplier;
+    this.pos.y += this.movement.y * timeStep * houndMovementMultiplier;
+    
+    if (distanceBetween(this.moveTarget, this.pos) < 10)
+      this.stopMoving()
+  }
 
   update() {
     if (!this.alive)
       return;
     this.updateBounds();
+    this.updateMovement();
   }
 
   onInspect() {
