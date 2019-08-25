@@ -53,7 +53,6 @@ class Map {
 
     var voronoiPoints = [];
 
-    voronoi.size([this.height, this.width]);
     
     for (var i = 0; i < voronoiDensity; i++) {
       var x = randomWithSeed(this.seed[i]) * this.width;

@@ -5,6 +5,12 @@ var colors_primary = [
   '#f00', '#00f'
 ];
 
+var camera = {
+  x: 0,
+  y: 0,
+  scale: 1
+}
+
 var graphics = {
   init: function() {
     this.canvas = document.getElementById("output-canvas");
@@ -17,11 +23,18 @@ var graphics = {
   },
   
   render: function() {
+    this.ctx.resetTransform();
+
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.rect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.fillStyle = '#000';
     this.ctx.fill();
     this.ctx.fillStyle = "#00FF00";
+
+
+    this.ctx.translate(-camera.x, -camera.y);
+    this.ctx.scale(camera.scale, camera.scale);
+    
     map.mapData.cells.forEach(function (cell){
       graphics.drawPolygon(cell.region, cell.region.stroke, cell.region.fill);
     });

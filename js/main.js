@@ -377,6 +377,21 @@ $('#input-console').keydown(function(e) {
   }
 });
 
+document.addEventListener('keydown', (e) => {
+  e.preventDefault();
+  if (e.code === "ArrowUp")
+    camera.y -= timeStep;
+  else if (e.code === "ArrowDown")
+    camera.y += timeStep
+  if (e.code === "ArrowLeft")
+    camera.x -= timeStep
+  console.log(e.code);
+  if (e.code === "Minus")
+    camera.scale -= timeStep / 100;
+  else if (e.code === "Equal")
+    camera.scale += timeStep / 100;
+});
+
 function disableInput(duration){
   input.enabled = false;
   $('button').addClass('disabled');
