@@ -21,10 +21,10 @@ body {
   border: 4px inset darkgrey;
   color: #0f0;
   font-family: monospace;
-  height: 256px;
+  height: 128px;
+  padding: 0;
   position: relative;
   overflow-y: scroll;
-  flex-grow: 1;
 }
 
 .map {

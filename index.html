@@ -16,17 +16,17 @@
   <body>
 
     <div class="container mt-5">
-      <div class="row">
-        <div class="col-8">
-          <canvas id="output-canvas" style="width: 100%; margin: auto;"></canvas>
+      <div class="console">
+        <ul id="output-console">
+        </ul>
+        <div class="console-input-wrapper">
+          <input id="input-console">
+          <button class="btn-console" onclick="sendCommand()">EXECUTE</button>
         </div>
-        <div class="console col-4">
-          <ul id="output-console">
-          </ul>
-          <div class="console-input-wrapper">
-            <input id="input-console">
-            <button class="btn-console" onclick="sendCommand()">EXECUTE</button>
-          </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <canvas id="output-canvas" style="width: 100%; margin: auto;"></canvas>
         </div>
       </div>
     </div>
