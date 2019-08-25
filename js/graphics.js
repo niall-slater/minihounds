@@ -1,6 +1,3 @@
-//Import voronoi
-var voronoi = d3.voronoi();
-
 var colors_primary = [
   '#f00', '#00f'
 ];
@@ -31,21 +28,23 @@ var graphics = {
     this.ctx.fill();
     this.ctx.fillStyle = "#00FF00";
 
+    this.ctx.translate(settings.gameWidth/2, settings.gameHeight/2);
+    this.ctx.scale(camera.scale, camera.scale);
+    this.ctx.translate(-settings.gameWidth/2, -settings.gameHeight/2);
 
     this.ctx.translate(-camera.x, -camera.y);
-    this.ctx.scale(camera.scale, camera.scale);
     
-    map.mapData.cells.forEach(function (cell){
-      graphics.drawPolygon(cell.region, cell.region.stroke, cell.region.fill);
+    map.mapData.polygons.forEach(function (region){
+      graphics.drawPolygon(region, region.stroke, region.fill);
     });
     
-    map.mapData.cells.forEach(function (cell){
-      graphics.drawText(cell.region.name + " " + cell.region.type, 
-                        cell.region.center[0] - 100 + 2,
-                        cell.region.center[1] + 2, '#000', 24);
-      graphics.drawText(cell.region.name + " " + cell.region.type, 
-                        cell.region.center[0] - 100,
-                        cell.region.center[1], '#fff', 24);
+    map.mapData.polygons.forEach(function (region){
+      graphics.drawText(region.name + " " + region.type, 
+                        region.center[0] - 100 + 2,
+                        region.center[1] + 2, '#000', 24);
+      graphics.drawText(region.name + " " + region.type, 
+                        region.center[0] - 100,
+                        region.center[1], '#fff', 24);
     });
     
     //Render hounds

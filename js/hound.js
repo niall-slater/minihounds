@@ -1,4 +1,4 @@
-var houndMovementMultiplier = 0.01;
+var houndMovementMultiplier = 0.003;
 
 class Hound {
   constructor(id, name, position, team, stats) {
@@ -161,7 +161,7 @@ class Hound {
   }
 
   wander() {
-    var target = {x: Math.random() * settings.gameWidth, y: Math.random() * settings.gameHeight/2};
+    var target = {x: Math.random() * settings.mapWidth, y: Math.random() * settings.mapHeight/2};
     var repeat = function(hound) {hound.wander();}
     this.moveTo(target, repeat);
   }

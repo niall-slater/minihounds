@@ -9,8 +9,10 @@ var trailDots = [];
 var playerTeam = 0;
 
 var settings = {
-  gameWidth: 1280,
-  gameHeight: 1280,
+  gameWidth: 800,
+  gameHeight: 600,
+  mapWidth: 2048,
+  mapHeight: 2048,
   difficulty: 1
 };
 
@@ -63,7 +65,7 @@ var output = {
   planetList: undefined
 };
 
-var complexity = 44;
+var complexity = 144;
 
 var seed = [13, 1, 23, 4, 5, 6,
             13, 1, 23, 4, 5, 6,
@@ -378,14 +380,19 @@ $('#input-console').keydown(function(e) {
 });
 
 document.addEventListener('keydown', (e) => {
-  e.preventDefault();
+  
+  console.log(e.code);
+
   if (e.code === "ArrowUp")
     camera.y -= timeStep;
   else if (e.code === "ArrowDown")
-    camera.y += timeStep
+    camera.y += timeStep;
+  
   if (e.code === "ArrowLeft")
-    camera.x -= timeStep
-  console.log(e.code);
+    camera.x -= timeStep;
+  else if (e.code === "ArrowRight")
+    camera.x += timeStep;
+  
   if (e.code === "Minus")
     camera.scale -= timeStep / 100;
   else if (e.code === "Equal")

@@ -1,3 +1,6 @@
+//Import voronoi
+var voronoi = d3.voronoi();
+
 var terrainTypes = [
   {
     name: 'Plains',
@@ -48,8 +51,8 @@ class Map {
   constructor(givenSeed) {
     this.seed = givenSeed;
 
-    this.height = settings.gameHeight;
-    this.width = settings.gameWidth;
+    this.height = settings.mapWidth;
+    this.width = settings.mapHeight;
 
     var voronoiPoints = [];
 
@@ -59,6 +62,9 @@ class Map {
       var y = randomWithSeed(this.seed[i + 1]) * this.height;
       voronoiPoints.push([x, y]);
     }
+    
+    voronoi.size([settings.mapWidth, settings.mapHeight]);
+
     //generate map using voronoi diagrams
     this.mapData = voronoi(voronoiPoints);
     var regions = this.mapData.polygons();
@@ -68,9 +74,10 @@ class Map {
           return point;
       });
     });
+    this.mapData.polygons = regions;
 
     //assign region properties
-    regions.forEach(function (poly) {
+    this.mapData.polygons.forEach(function (poly) {
       var type = getFromArrayWithSeed(terrainTypes, seed[0]);
       var type = getRandom(terrainTypes);
 
@@ -82,11 +89,6 @@ class Map {
       poly.name = getRandom(city_names);
       poly.center = getCenterOfPolygon(poly);
     });
-    
-    for (var i = 0; i < this.mapData.cells.length; i++) {
-      this.mapData.cells[i].region = regions[i];
-    }
-    this.regions = this.mapData.polygons();
     console.log('Mapdata:', this.mapData);
   }
 
@@ -95,8 +97,8 @@ class Map {
   }
 
   getRegionAt(x, y) {
-    for (var i = 0; i < this.mapData.cells.length; i++) {
-      var region = this.mapData.cells[i].region;
+    for (var i = 0; i < this.mapData.polygons.length; i++) {
+      var region = this.mapData.polygons[i];
       if (isInside([x, y], region))
         return region;
     }
