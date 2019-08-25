@@ -33,7 +33,7 @@ class Hound {
       this.wander();
     var me = this;
     this.think();
-    this.thinkInterval = setInterval(function(){me.think();}, 3000);
+    this.thinkInterval = setInterval(function(){me.think();}, 8000);
   }
 
   think() {

@@ -2,12 +2,6 @@ var colors_primary = [
   '#f00', '#00f'
 ];
 
-var camera = {
-  x: 0,
-  y: 0,
-  scale: 1
-}
-
 var graphics = {
   init: function() {
     this.canvas = document.getElementById("output-canvas");
@@ -17,28 +11,86 @@ var graphics = {
     this.canvas.height = settings.gameHeight;
     this.center = {x: this.canvas.width/2, y:this.canvas.height/2};
     this.flickerFrequency = 0;
+    
+    this.setUpCamera();
   },
   
+  setUpCamera: function() {
+    //Camera pan and zoom code taken from https://codepen.io/techslides/pen/zowLd
+    
+    this.trackTransforms(this.ctx);
+
+    var lastX = this.canvas.width/2, lastY = this.canvas.height/2;
+
+    var dragStart, dragged;
+
+    this.canvas.addEventListener('mousedown', function (evt) {
+      document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
+      lastX = evt.offsetX || (evt.pageX - this.canvas.offsetLeft);
+      lastY = evt.offsetY || (evt.pageY - this.canvas.offsetTop);
+      dragStart = graphics.ctx.transformedPoint(lastX, lastY);
+      dragged = false;
+    }, false);
+
+    this.canvas.addEventListener('mousemove', function (evt) {
+      lastX = evt.offsetX || (evt.pageX - this.canvas.offsetLeft);
+      lastY = evt.offsetY || (evt.pageY - this.canvas.offsetTop);
+      dragged = true;
+      if (dragStart) {
+        var pt = graphics.ctx.transformedPoint(lastX,lastY);
+        graphics.ctx.translate(pt.x-dragStart.x,pt.y-dragStart.y);
+      }
+    }, false);
+
+    this.canvas.addEventListener('mouseup',function(evt) {
+      dragStart = null;
+      if (!dragged) zoom(evt.shiftKey ? -1 : 1 );
+    }, false);
+    
+
+    var zoom = function(clicks) {
+      var pt = graphics.ctx.transformedPoint(lastX,lastY);
+      graphics.ctx.translate(pt.x,pt.y);
+      var scaleFactor = 1.1;
+      var factor = Math.pow(scaleFactor,clicks);
+      graphics.ctx.scale(factor,factor);
+      graphics.ctx.translate(-pt.x,-pt.y);
+    }
+
+    var handleScroll = function(evt) {
+      var delta = evt.wheelDelta ? evt.wheelDelta/40 : evt.detail ? -evt.detail : 0;
+      if (delta)
+        zoom(delta);
+      return evt.preventDefault() && false;
+    };
+
+    this.canvas.addEventListener('DOMMouseScroll',handleScroll,false);
+    this.canvas.addEventListener('mousewheel',handleScroll,false);
+
+  },
+
   render: function() {
-    this.ctx.resetTransform();
+    
+    this.ctx.save();
 
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.rect(0, 0, this.canvas.width, this.canvas.height);
+
+    var p1 = this.ctx.transformedPoint(0,0);
+    var p2 = this.ctx.transformedPoint(this.canvas.width,this.canvas.height);
+    
+    this.ctx.clearRect(p1.x,p1.y,p2.x-p1.x,p2.y-p1.y);
+    this.ctx.restore();
+    
     this.ctx.fillStyle = '#000';
     this.ctx.fill();
     this.ctx.fillStyle = "#00FF00";
-
-    this.ctx.translate(settings.gameWidth/2, settings.gameHeight/2);
-    this.ctx.scale(camera.scale, camera.scale);
-    this.ctx.translate(-settings.gameWidth/2, -settings.gameHeight/2);
-
-    this.ctx.translate(-camera.x, -camera.y);
     
-    map.mapData.polygons.forEach(function (region){
+    map.mapData.polygons.forEach(function (region) {
       graphics.drawPolygon(region, region.stroke, region.fill);
     });
     
-    map.mapData.polygons.forEach(function (region){
+    map.mapData.polygons.forEach(function (region) {
       graphics.drawText(region.name + " " + region.type, 
                         region.center[0] - 100 + 2,
                         region.center[1] + 2, '#000', 24);
@@ -48,20 +100,20 @@ var graphics = {
     });
     
     //Render hounds
-    hounds.forEach(function(h){h.render()});
+    hounds.forEach(function(h) {h.render()});
     
     //Render projectiles
-    projectiles.forEach(function(p){p.render()});
+    projectiles.forEach(function(p) {p.render()});
     
     //Render traildots
-    trailDots.forEach(function(t){t.render()});
+    trailDots.forEach(function(t) {t.render()});
     
     //Render impacts
-    impacts.forEach(function(i){i.render()});
+    impacts.forEach(function(i) {i.render()});
     
     //Render vision circles
     var playerHounds = hounds.filter(
-      function(hound){return hound.team === playerTeam});
+      function(hound) {return hound.team === playerTeam});
     playerHounds.forEach(function (hound) {
       hound.renderSightRange();
     });
@@ -152,6 +204,70 @@ var graphics = {
     this.ctx.fillStyle = fill;
     if (fill)
       this.ctx.fill();
+  },
+  
+  //Camera stuff
+  
+  trackTransforms: function (ctx) {
+    var svg = document.createElementNS("http://www.w3.org/2000/svg",'svg');
+    var xform = svg.createSVGMatrix();
+    ctx.getTransform = function() { return xform; };
+
+    var savedTransforms = [];
+    var save = ctx.save;
+    ctx.save = function() {
+        savedTransforms.push(xform.translate(0,0));
+        return save.call(ctx);
+    };
+
+    var restore = ctx.restore;
+    ctx.restore = function() {
+      xform = savedTransforms.pop();
+      return restore.call(ctx);
+            };
+
+    var scale = ctx.scale;
+    ctx.scale = function(sx,sy) {
+      xform = xform.scaleNonUniform(sx,sy);
+      return scale.call(ctx,sx,sy);
+            };
+
+    var rotate = ctx.rotate;
+    ctx.rotate = function(radians) {
+        xform = xform.rotate(radians*180/Math.PI);
+        return rotate.call(ctx,radians);
+    };
+
+    var translate = ctx.translate;
+    ctx.translate = function(dx,dy) {
+        xform = xform.translate(dx,dy);
+        return translate.call(ctx,dx,dy);
+    };
+
+    var transform = ctx.transform;
+    ctx.transform = function(a,b,c,d,e,f) {
+        var m2 = svg.createSVGMatrix();
+        m2.a=a; m2.b=b; m2.c=c; m2.d=d; m2.e=e; m2.f=f;
+        xform = xform.multiply(m2);
+        return transform.call(ctx,a,b,c,d,e,f);
+    };
+
+    var setTransform = ctx.setTransform;
+    ctx.setTransform = function(a,b,c,d,e,f) {
+        xform.a = a;
+        xform.b = b;
+        xform.c = c;
+        xform.d = d;
+        xform.e = e;
+        xform.f = f;
+        return setTransform.call(ctx,a,b,c,d,e,f);
+    };
+
+    var pt = svg.createSVGPoint();
+    ctx.transformedPoint = function(x,y) {
+        pt.x=x; pt.y=y;
+        return pt.matrixTransform(xform.inverse());
+    }
   }
 }
 
