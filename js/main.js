@@ -76,10 +76,10 @@ var voronoiDensity;
 
 function createMap() {
 
-  hounds = [];
-  projectiles = [];
-  impacts = [];
-  trailDots = [];
+  hounds.length = 0;
+  projectiles.length = 0;
+  impacts.length = 0;
+  trailDots.length = 0;
 
   for (var i = 0; i < complexity; i++) {
     seed[i] = Math.random() * 2000;
@@ -130,9 +130,14 @@ function start() {
 
 function win() {
   addMessage('WAVE CLEARED. REBOOTING...');
-  settings.difficulty++;
-  addMessage('ENTERING WAVE ' + settings.difficulty);
-  createMap();
+  settings.paused = true;
+  
+  setTimeout(function () {
+    settings.paused = false;
+    settings.difficulty++;
+    createMap();
+    addMessage('ENTERING WAVE ' + settings.difficulty);
+  }, 3000);
 }
 
 function lose() {
@@ -142,11 +147,23 @@ function lose() {
 /* Game functions */
 
 function update() {
-  //Update graphics
-  TWEEN.update();
-  //update objects
-  //update ui
+  
   updateAllDisplays();
+  
+  if (settings.paused) {
+    projectiles.forEach(function(p){p.update();});
+    impacts.forEach(function(i){i.update();});
+    trailDots.forEach(function(t){t.update();});
+    
+    projectiles = removeDead(projectiles);
+    impacts = removeDead(impacts);
+    trailDots = removeDead(trailDots);
+
+    graphics.render();
+    return;
+  }
+  
+  TWEEN.update();
 
   map.update();
 
