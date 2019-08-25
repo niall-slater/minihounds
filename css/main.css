@@ -20,11 +20,24 @@ body {
   background: #000;
   border: 4px inset darkgrey;
   color: #0f0;
+  float: right;
   font-family: monospace;
-  height: 128px;
+  height: 600px;
   padding: 0;
   position: relative;
+  width: 27%;
+  overflow-x: scroll;
   overflow-y: scroll;
+}
+
+@media (max-width: 1200px) {
+  canvas {
+    width: 70%;
+  }
+  
+  .console {
+    max-height: 400px;
+  }
 }
 
 .map {

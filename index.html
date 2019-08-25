@@ -16,47 +16,31 @@
   <body>
 
     <div class="container mt-5">
-      <div class="console">
-        <ul id="output-console">
-        </ul>
-        <div class="console-input-wrapper">
-          <input id="input-console">
-          <button class="btn-console" onclick="sendCommand()">EXECUTE</button>
-        </div>
-      </div>
       <div class="row">
         <div class="col-12">
-          <canvas id="output-canvas" style=""></canvas>
+          <canvas id="output-canvas" style="border: 2px solid black; background: linear-gradient(darkgreen, black);"></canvas>
+          <div class="console">
+            <ul id="output-console">
+            </ul>
+            <div class="console-input-wrapper">
+              <input id="input-console">
+              <button class="btn-console" onclick="sendCommand()">EXECUTE</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     
-    <div class="container">
-      <h1>MINIHOUNDS - WORK IN PROGRESS</h1>
-      <h2>How to play:</h2>
+    <div class="container mx-auto col-4 mt-5">
+      <h2>MINIHOUNDS - WORK IN PROGRESS</h2>
+      <h3>How to play:</h3>
       <p>Enter commands in the format NAME VERB PARAMETERS, like so:</p>
       <ul>
-        <li>PATROCLUS MOVE N 500</li>
-        <li>ACHILLES STOP</li>
-        <li>PATROCLUS ATTACK HECTOR</li>
+        <li>SCOUT MOVE N 500</li>
+        <li>SOLDIER STOP</li>
+        <li>ARTILLERY ATTACK ENEMY</li>
       </ul>
       <p>Find the enemy hounds, evade their attacks and destroy them.</p>
-    </div>
-
-    <div id="control-panel" class="container mt-2">
-      <div class="row">
-        <div class="alert alert-secondary" id="alert-panel">No incoming transmissions...</div>
-      </div>
-      <div class="row">
-        <div class="col-6">
-          <h5>Units:</h5>
-          <div id="unit-list"></div>
-        </div>
-        <div class="col-6">
-          <h5>Targets:</h5>
-          <div id="target-list"></div>
-        </div>
-      </div>
     </div>
 
     <!-- Optional JavaScript -->
@@ -69,12 +53,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/16.3.5/Tween.min.js"></script>
     <script src="https://d3js.org/d3-voronoi.v1.min.js"></script>
 
-    <script type="text/javascript" src="./data/stats.js?v0.02"></script>
-    <script type="text/javascript" src="./js/commands.js?v0.02"></script>
-    <script type="text/javascript" src="./js/hound.js?v0.02"></script>
-    <script type="text/javascript" src="./js/projectile.js?v0.02"></script>
-    <script type="text/javascript" src="./js/map.js?v0.02"></script>
-    <script type="text/javascript" src="./js/graphics.js?v0.02"></script>
-    <script type="text/javascript" src="./js/main.js?v0.02"></script>
+    <script type="text/javascript" src="./data/stats.js?v0.03"></script>
+    <script type="text/javascript" src="./js/commands.js?v0.03"></script>
+    <script type="text/javascript" src="./js/hound.js?v0.03"></script>
+    <script type="text/javascript" src="./js/projectile.js?v0.03"></script>
+    <script type="text/javascript" src="./js/map.js?v0.03"></script>
+    <script type="text/javascript" src="./js/graphics.js?v0.03"></script>
+    <script type="text/javascript" src="./js/main.js?v0.03"></script>
   </body>
 </html>

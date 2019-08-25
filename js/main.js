@@ -126,6 +126,16 @@ function start() {
   graphics.init();
   setInterval(update, timeStep);
   createMap();
+  addMessage('System booting...', colors_computer[0], 50);
+  addMessage('Please wait...', colors_computer[0], 100);
+  addMessage('Reaching hound receivers...', colors_computer[0], 250);
+  addMessage('Hounds responding...', colors_computer[0], 1250);
+  getPlayerHounds().forEach(function(hound){
+    addMessage(hound.name.toUpperCase() + " READY", colors_computer[4], 1350);
+  });
+  addMessage('Hounds awaiting commands.', null, 2500);
+  addMessage('Try the following:', '#eee', 3000);
+  addMessage('SCOUT MOVE N 250', '#fff', 3500);
 }
 
 function win() {
