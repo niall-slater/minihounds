@@ -1,4 +1,4 @@
-var houndMovementMultiplier = 0.003;
+var houndMovementMultiplier = 0.03;
 
 class Hound {
   constructor(id, name, position, team, stats) {
@@ -64,8 +64,9 @@ class Hound {
     dy = target.y - this.pos.y;
     var angle = Math.atan2(dy, dx);
     var xVelocity, yVelocity;
-    xVelocity = this.stats.speed * Math.cos(angle);
-    yVelocity = this.stats.speed * Math.sin(angle);
+
+    xVelocity = Math.cos(angle);
+    yVelocity = Math.sin(angle);
 
     this.movement = {x: xVelocity, y: yVelocity};
   }
@@ -88,8 +89,17 @@ class Hound {
     if (!this.moveTarget)
       return;
     
-    this.pos.x += this.movement.x * timeStep * houndMovementMultiplier;
-    this.pos.y += this.movement.y * timeStep * houndMovementMultiplier;
+    this.currentRegion = map.getRegionAt(this.pos.x, this.pos.y);
+    
+    if (!this.currentRegion) {
+      this.stopMoving();
+      return;
+    }
+    
+    var speedCostAdjustment = 1 - this.stats.speedPenalty;
+    
+    this.pos.x += this.movement.x * timeStep * houndMovementMultiplier * speedCostAdjustment;
+    this.pos.y += this.movement.y * timeStep * houndMovementMultiplier * speedCostAdjustment;
     
     if (distanceBetween(this.moveTarget, this.pos) < 10)
       this.stopMoving()
@@ -98,6 +108,13 @@ class Hound {
   update() {
     if (!this.alive)
       return;
+
+    this.currentRegion = map.getRegionAt(this.pos.x, this.pos.y);
+    if (this.currentRegion)
+      this.stats.speedPenalty = this.currentRegion.movecost;
+    else
+      this.stats.speedPenalty = 0;
+
     this.updateBounds();
     this.updateMovement();
   }

@@ -84,7 +84,7 @@ class Map {
       poly.stroke = '#000';
       poly.type = type.name;
       poly.fill = type.color;
-      poly.movement = type.movement;
+      poly.movecost = type.movecost;
       poly.defence = type.defence;
       poly.name = getRandom(city_names);
       poly.center = getCenterOfPolygon(poly);

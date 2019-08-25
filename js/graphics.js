@@ -26,15 +26,15 @@ var graphics = {
 
     this.canvas.addEventListener('mousedown', function (evt) {
       document.body.style.mozUserSelect = document.body.style.webkitUserSelect = document.body.style.userSelect = 'none';
-      lastX = evt.offsetX || (evt.pageX - this.canvas.offsetLeft);
-      lastY = evt.offsetY || (evt.pageY - this.canvas.offsetTop);
+      lastX = evt.offsetX || (evt.pageX - graphics.canvas.offsetLeft);
+      lastY = evt.offsetY || (evt.pageY - graphics.canvas.offsetTop);
       dragStart = graphics.ctx.transformedPoint(lastX, lastY);
       dragged = false;
     }, false);
 
     this.canvas.addEventListener('mousemove', function (evt) {
-      lastX = evt.offsetX || (evt.pageX - this.canvas.offsetLeft);
-      lastY = evt.offsetY || (evt.pageY - this.canvas.offsetTop);
+      lastX = evt.offsetX || (evt.pageX - graphics.canvas.offsetLeft);
+      lastY = evt.offsetY || (evt.pageY - graphics.canvas.offsetTop);
       dragged = true;
       if (dragStart) {
         var pt = graphics.ctx.transformedPoint(lastX,lastY);
