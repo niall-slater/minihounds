@@ -123,6 +123,7 @@ function setUpElementReferences() {
 }
 
 function start() {
+  $('input').focus();
   graphics.init();
   setInterval(update, timeStep);
   createMap();
@@ -151,7 +152,8 @@ function win() {
 }
 
 function lose() {
-  addMessage('ALL HOUNDS LOST. SIMULATION COMPLETE.');
+  addMessage('ALL HOUNDS LOST. SIMULATION COMPLETE');
+  settings.paused = true;
 }
 
 /* Game functions */

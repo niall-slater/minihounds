@@ -18,26 +18,20 @@ body {
 
 .console {
   background: #000;
-  border: 4px inset darkgrey;
+  bottom: 38px;
+  border: 1px solid #050;
   color: #0f0;
   float: right;
   font-family: monospace;
-  height: 600px;
+  height: 400px;
+  right: 12px;
   padding: 0;
-  position: relative;
-  width: 27%;
-  overflow-x: scroll;
+  position: fixed;
+  overflow-x: hidden;
   overflow-y: scroll;
-}
-
-@media (max-width: 1200px) {
-  canvas {
-    width: 70%;
-  }
-  
-  .console {
-    max-height: 400px;
-  }
+  opacity: .8;
+  width: 500px;
+  z-index: 5;
 }
 
 .map {
@@ -47,12 +41,13 @@ body {
   overflow: hidden;
 }
 
-.map .canvas {
+.map canvas {
   margin: 0 auto;
+  width: 100%;
 }
 
 .console::-webkit-scrollbar {
-  background: #333;
+  background: #000;
 }
 .console::-webkit-scrollbar-thumb {
   background: #0f0;
@@ -61,7 +56,7 @@ body {
 .console ul {
   list-style: none;
   margin: 0;
-  padding: 4px 12px;
+  padding: 4px;
 }
 
 .console li:before {
@@ -76,11 +71,12 @@ body {
 
 .console-input-wrapper {
   background: #000;
-  border: 4px inset darkgrey;
-  border-top: none;
+  position: fixed;
+  bottom: 10px;
   color: #0f0;
   font-family: monospace;
-  width: 100%;
+  width: 40%;
+  z-index: 6;
 }
 
 .console-input-wrapper input {

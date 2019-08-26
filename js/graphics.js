@@ -51,7 +51,7 @@ var graphics = {
     var zoom = function(clicks) {
       var pt = graphics.ctx.transformedPoint(lastX,lastY);
       graphics.ctx.translate(pt.x,pt.y);
-      var scaleFactor = 1.1;
+      var scaleFactor = 1.07;
       var factor = Math.pow(scaleFactor,clicks);
       graphics.ctx.scale(factor,factor);
       graphics.ctx.translate(-pt.x,-pt.y);

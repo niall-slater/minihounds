@@ -15,32 +15,17 @@
   </head>
   <body>
 
-    <div class="container mt-5">
-      <div class="row">
-        <div class="col-12">
-          <canvas id="output-canvas" style="border: 2px solid black; background: linear-gradient(darkgreen, black);"></canvas>
-          <div class="console">
-            <ul id="output-console">
-            </ul>
-            <div class="console-input-wrapper">
-              <input id="input-console">
-              <button class="btn-console" onclick="sendCommand()">EXECUTE</button>
-            </div>
-          </div>
-        </div>
+    <div class="console">
+      <ul id="output-console">
+      </ul>
+      <div class="console-input-wrapper">
+        <input id="input-console">
+        <button class="btn-console" onclick="sendCommand()">EXECUTE</button>
       </div>
     </div>
     
-    <div class="container mx-auto col-4 mt-5">
-      <h2>MINIHOUNDS - WORK IN PROGRESS</h2>
-      <h3>How to play:</h3>
-      <p>Enter commands in the format NAME VERB PARAMETERS, like so:</p>
-      <ul>
-        <li>SCOUT MOVE N 500</li>
-        <li>SOLDIER STOP</li>
-        <li>ARTILLERY ATTACK ENEMY</li>
-      </ul>
-      <p>Find the enemy hounds, evade their attacks and destroy them.</p>
+    <div class="container mt-5">
+      <canvas id="output-canvas" style="border: 2px solid black; background: linear-gradient(darkgreen, black);"></canvas>
     </div>
 
     <!-- Optional JavaScript -->
