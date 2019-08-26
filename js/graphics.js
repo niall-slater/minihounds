@@ -44,7 +44,8 @@ var graphics = {
 
     this.canvas.addEventListener('mouseup',function(evt) {
       dragStart = null;
-      if (!dragged) zoom(evt.shiftKey ? -1 : 1 );
+      if (!dragged)
+        zoom(evt.shiftKey ? -1 : 1 );
     }, false);
     
 
@@ -64,8 +65,8 @@ var graphics = {
       return evt.preventDefault() && false;
     };
 
-    this.canvas.addEventListener('DOMMouseScroll',handleScroll,false);
-    this.canvas.addEventListener('mousewheel',handleScroll,false);
+    this.canvas.addEventListener('DOMMouseScroll', handleScroll, false);
+    this.canvas.addEventListener('mousewheel', handleScroll, false);
 
   },
 

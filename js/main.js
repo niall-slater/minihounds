@@ -30,7 +30,7 @@ var houndClassStats = {
   },
   soldier: {
     level: 1,
-    hp: 6 + rollDice(6, 1),
+    hp: 12 + rollDice(12, 1),
     ac: 6 + rollDice(4, 1),
     speed: 3,
     sightRange: 250,
@@ -46,6 +46,16 @@ var houndClassStats = {
     sightRange: 100,
     projectileSpeed: 7,
     projectileRadius: 100,
+    homingProjectiles: false
+  },
+  weakling: {
+    level: 1,
+    hp: 6 + rollDice(4, 1),
+    ac: 6 + rollDice(3, 1),
+    speed: 1,
+    sightRange: 100,
+    projectileSpeed: 3,
+    projectileRadius: 40,
     homingProjectiles: false
   }
 }
@@ -90,15 +100,20 @@ function createMap() {
   map = new Map(seed);
 
   hounds.push(new Hound(
-    1, 'scout', {x: 550, y: 950}, 0, houndClassStats.scout));
+    1, 'scout', {x: settings.gameWidth/2, y: settings.gameHeight/2}, 
+    0, houndClassStats.scout));
   hounds.push(new Hound(
-    2, 'soldier', {x: 450, y: 950}, 0, houndClassStats.soldier));
+    2, 'soldier', {x: settings.gameWidth/2 - 50, y: settings.gameHeight/2 - 50}, 
+    0, houndClassStats.soldier));
   hounds.push(new Hound(
-    3, 'artillery', {x: 500, y: 1050}, 0, houndClassStats.artillery));
+    3, 'artillery', {x: settings.gameWidth/2 + 50, y: settings.gameHeight/2 - 50}, 
+    0, houndClassStats.artillery));
 
-  for (var i = 0; i < settings.difficulty; i++) {
-    var randomPos = {x: Math.random() * settings.gameWidth, y: Math.random() * settings.gameHeight / 2 };
-    hounds.push(new Hound(3 + i, 'enemy', randomPos, 1, getRandomProperty(houndClassStats)));
+  for (var i = 0; i < settings.difficulty * 3; i++) {
+    var randomPos = {x: Math.random() * settings.mapWidth, y: (Math.random() * settings.mapHeight / 2) + settings.mapHeight/2};
+    var id = 3 + i;
+    hounds.push(new Hound(id, 'enemy' + id, randomPos, 1,
+                          houndClassStats.weakling));
   }
 }
 

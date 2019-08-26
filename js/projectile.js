@@ -128,7 +128,7 @@ class Impact {
     if (!this.alive)
       return;
 
-    var impactShrinkTime = 2000;
+    var impactShrinkTime = 100;
 
     if (this.radius > 0)
       this.radius -= timeStep/ impactShrinkTime;
