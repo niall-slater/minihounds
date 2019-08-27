@@ -78,9 +78,9 @@ var output = {
 var complexity = 144;
 
 var seed = [13, 1, 23, 4, 5, 6,
-            13, 1, 23, 4, 5, 6,
-            13, 1, 23, 4, 5, 6,
-            13, 1, 23, 4, 5, 6];
+  13, 1, 23, 4, 5, 6,
+  13, 1, 23, 4, 5, 6,
+  13, 1, 23, 4, 5, 6];
 
 var voronoiDensity;
 
@@ -100,29 +100,29 @@ function createMap() {
   map = new Map(seed);
 
   hounds.push(new Hound(
-    1, 'scout', {x: settings.gameWidth/2, y: settings.gameHeight/2}, 
+    1, 'scout', { x: settings.gameWidth / 2, y: settings.gameHeight / 2 },
     0, houndClassStats.scout));
   hounds.push(new Hound(
-    2, 'soldier', {x: settings.gameWidth/2 - 50, y: settings.gameHeight/2 - 50}, 
+    2, 'soldier', { x: settings.gameWidth / 2 - 50, y: settings.gameHeight / 2 - 50 },
     0, houndClassStats.soldier));
   hounds.push(new Hound(
-    3, 'artillery', {x: settings.gameWidth/2 + 50, y: settings.gameHeight/2 - 50}, 
+    3, 'artillery', { x: settings.gameWidth / 2 + 50, y: settings.gameHeight / 2 - 50 },
     0, houndClassStats.artillery));
 
   for (var i = 0; i < settings.difficulty * 3; i++) {
-    var randomPos = {x: Math.random() * settings.mapWidth, y: (Math.random() * settings.mapHeight / 2) + settings.mapHeight/2};
+    var randomPos = { x: Math.random() * settings.mapWidth, y: (Math.random() * settings.mapHeight / 2) + settings.mapHeight / 2 };
     var id = 3 + i;
     hounds.push(new Hound(id, 'enemy' + id, randomPos, 1,
-                          houndClassStats.weakling));
+      houndClassStats.weakling));
   }
 }
 
 function getRandomProperty(obj) {
   var keys = Object.keys(obj)
-  return obj[keys[ keys.length * Math.random() << 0]];
+  return obj[keys[keys.length * Math.random() << 0]];
 }
 
-$( document ).ready(function() {
+$(document).ready(function () {
   setUpElementReferences();
   start();
 });
@@ -146,7 +146,7 @@ function start() {
   addMessage('Please wait...', colors_computer[0], 100);
   addMessage('Reaching hound receivers...', colors_computer[0], 250);
   addMessage('Hounds responding...', colors_computer[0], 1250);
-  getPlayerHounds().forEach(function(hound){
+  getPlayerHounds().forEach(function (hound) {
     addMessage(hound.name.toUpperCase() + " READY", colors_computer[4], 1350);
   });
   addMessage('Hounds awaiting commands.', null, 2500);
@@ -157,7 +157,7 @@ function start() {
 function win() {
   addMessage('WAVE CLEARED. REBOOTING...');
   settings.paused = true;
-  
+
   setTimeout(function () {
     settings.paused = false;
     settings.difficulty++;
@@ -174,14 +174,14 @@ function lose() {
 /* Game functions */
 
 function update() {
-  
+
   updateAllDisplays();
-  
+
   if (settings.paused) {
-    projectiles.forEach(function(p){p.update();});
-    impacts.forEach(function(i){i.update();});
-    trailDots.forEach(function(t){t.update();});
-    
+    projectiles.forEach(function (p) { p.update(); });
+    impacts.forEach(function (i) { i.update(); });
+    trailDots.forEach(function (t) { t.update(); });
+
     projectiles = removeDead(projectiles);
     impacts = removeDead(impacts);
     trailDots = removeDead(trailDots);
@@ -189,15 +189,15 @@ function update() {
     graphics.render();
     return;
   }
-  
+
   TWEEN.update();
 
   map.update();
 
-  hounds.forEach(function(h){h.update();});
-  projectiles.forEach(function(p){p.update();});
-  impacts.forEach(function(i){i.update();});
-  trailDots.forEach(function(t){t.update();});
+  hounds.forEach(function (h) { h.update(); });
+  projectiles.forEach(function (p) { p.update(); });
+  impacts.forEach(function (i) { i.update(); });
+  trailDots.forEach(function (t) { t.update(); });
 
   hounds = removeDead(hounds);
   projectiles = removeDead(projectiles);
@@ -266,7 +266,7 @@ function addMessage(text, color, delay, includesDonger) {
   if (!delay)
     delay = 0;
 
-  setTimeout(function() {
+  setTimeout(function () {
     output.console.appendChild(li);
     output.console.parentElement.scrollTop = output.console.parentElement.scrollHeight;
     output.numMessages++
@@ -288,7 +288,7 @@ function addMessageWithLink(linkText, url, delay) {
   if (!delay)
     delay = 0;
 
-  setTimeout(function() {
+  setTimeout(function () {
     output.console.appendChild(li);
     output.console.parentElement.scrollTop = output.console.parentElement.scrollHeight;
     output.numMessages++
@@ -313,7 +313,7 @@ function addMessageImage(imageSrc, url, delay) {
   if (!delay)
     delay = 0;
 
-  setTimeout(function() {
+  setTimeout(function () {
     output.console.appendChild(li);
     output.console.parentElement.scrollTop = output.console.parentElement.scrollHeight;
     output.numMessages++
@@ -399,7 +399,7 @@ function readCookie(name) {
   return result;
 }
 
-function parseBool (str) {
+function parseBool(str) {
   if (str === 'true')
     return true;
   else
@@ -410,16 +410,16 @@ function parseBool (str) {
 /* EVENT LISTENERS
 /*--------------------*/
 
-$('#input-console').keydown(function(e) {
+$('#input-console').keydown(function (e) {
   var context = this;
   // Enter pressed
-  if(e.which == 10 || e.which == 13) {
+  if (e.which == 10 || e.which == 13) {
     sendCommand();
   }
   // Up pressed
-  if(e.which == 38) {
+  if (e.which == 38) {
     recallLastCommand();
-    setTimeout(function(){context.selectionStart = context.selectionEnd = context.value.length},0);
+    setTimeout(function () { context.selectionStart = context.selectionEnd = context.value.length }, 0);
   }
 });
 
@@ -427,11 +427,11 @@ document.addEventListener('keydown', (e) => {
   //console.log(e.code);
 });
 
-function disableInput(duration){
+function disableInput(duration) {
   input.enabled = false;
   $('button').addClass('disabled');
 
-  if (duration){
+  if (duration) {
     setTimeout(enableInput, duration);
   }
 }

@@ -5,9 +5,9 @@ class Hound {
     this.id = id;
     this.name = name;
     this.pos = position;
-    this.movement = {x: 0, y: 0};
+    this.movement = { x: 0, y: 0 };
     this.moveTarget = null;
-    
+
     this.visible = false;
     this.alive = true;
 
@@ -33,7 +33,7 @@ class Hound {
       this.wander();
     var me = this;
     this.think();
-    this.thinkInterval = setInterval(function(){me.think();}, 8000);
+    this.thinkInterval = setInterval(function () { me.think(); }, 8000);
   }
 
   think() {
@@ -58,7 +58,7 @@ class Hound {
   moveTo(target, nextTask) {
     var targetRegion = map.getRegionAt(target.x, target.y);
     this.moveTarget = target;
-    
+
     var dx, dy;
     dx = target.x - this.pos.x;
     dy = target.y - this.pos.y;
@@ -68,7 +68,7 @@ class Hound {
     xVelocity = Math.cos(angle);
     yVelocity = Math.sin(angle);
 
-    this.movement = {x: xVelocity, y: yVelocity};
+    this.movement = { x: xVelocity, y: yVelocity };
   }
 
   stopMoving() {
@@ -80,27 +80,27 @@ class Hound {
   updateBounds() {
     this.poly = [
       [this.pos.x - 10, this.pos.y + 10],
-      [this.pos.x + 0,  this.pos.y - 10],
+      [this.pos.x + 0, this.pos.y - 10],
       [this.pos.x + 10, this.pos.y + 10]
     ];
   }
-  
+
   updateMovement() {
     if (!this.moveTarget)
       return;
-    
+
     this.currentRegion = map.getRegionAt(this.pos.x, this.pos.y);
-    
+
     if (!this.currentRegion) {
       this.stopMoving();
       return;
     }
-    
+
     var speedCostAdjustment = 1 - this.stats.speedPenalty;
-    
+
     this.pos.x += this.movement.x * timeStep * houndMovementMultiplier * speedCostAdjustment;
     this.pos.y += this.movement.y * timeStep * houndMovementMultiplier * speedCostAdjustment;
-    
+
     if (distanceBetween(this.moveTarget, this.pos) < 10)
       this.stopMoving()
   }
@@ -134,8 +134,8 @@ class Hound {
     if (!amount)
       return;
     this.stats.hp -= amount;
-    var terrainCover = map.getRegionAt(this.pos.x, this.pos. y).defence;
-    amount *= 1-terrainCover;
+    var terrainCover = map.getRegionAt(this.pos.x, this.pos.y).defence;
+    amount *= 1 - terrainCover;
     addMessage(amount + " damage to " + this.name + ". " + this.stats.hp + "HP remaining.");
     if (this.stats.hp <= 0) {
       this.stats.hp = 0;
@@ -155,7 +155,7 @@ class Hound {
 
   renderSightRange() {
     graphics.drawCircle(this.pos.x, this.pos.y,
-                        this.stats.sightRange, '#fff');
+      this.stats.sightRange, '#fff');
   }
 
   inSightRange() {
@@ -178,8 +178,8 @@ class Hound {
   }
 
   wander() {
-    var target = {x: Math.random() * settings.mapWidth, y: Math.random() * settings.mapHeight/2};
-    var repeat = function(hound) {hound.wander();}
+    var target = { x: Math.random() * settings.mapWidth, y: Math.random() * settings.mapHeight / 2 };
+    var repeat = function (hound) { hound.wander(); }
     this.moveTo(target, repeat);
   }
 

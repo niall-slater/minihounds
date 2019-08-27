@@ -6,12 +6,12 @@ function parseCommand(command) {
   var verb = components[0];
   components.shift();
   var args = components;
-  
-  switch(verb) {
+
+  switch (verb) {
     case 'move': {
       if (args.length != 2) {
         addMessage('invalid command');
-        return; 
+        return;
       }
       var movement = [0, 0];
       switch (args[0]) {
@@ -24,9 +24,11 @@ function parseCommand(command) {
       var subject = getNamedPlayerHound(name);
       var x = parseInt(movement[0]);
       var y = parseInt(movement[1]);
-      var moveCommand = 
-          {x: subject.pos.x + x,
-           y: subject.pos.y + y};
+      var moveCommand =
+      {
+        x: subject.pos.x + x,
+        y: subject.pos.y + y
+      };
       subject.moveTo(moveCommand);
       break;
     }
@@ -39,7 +41,7 @@ function parseCommand(command) {
       var subject = getNamedPlayerHound(name);
       if (args.length != 1) {
         addMessage('invalid command');
-        return; 
+        return;
       }
       var target = getNamedHound(args[0]);
       if (!target || !target.inSightRange()) {
@@ -55,13 +57,13 @@ function parseCommand(command) {
 
 function getNamedPlayerHound(name) {
   return getPlayerHounds().find(
-    (hound) => {return hound.name === name}
+    (hound) => { return hound.name === name }
   );
 }
 
 function getNamedHound(name) {
   return hounds.find(
-    (hound) => {return hound.name === name}
+    (hound) => { return hound.name === name }
   );
 }
 
