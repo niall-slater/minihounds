@@ -10,6 +10,7 @@ class Projectile {
     this.stats = {
       radius: this.creator.stats.projectileRadius,
       speed: this.creator.stats.projectileSpeed,
+      damage: this.creator.stats.projectileDamage,
       homing: this.creator.stats.homingProjectiles
     }
 
@@ -63,7 +64,7 @@ class Projectile {
 
   impact() {
     //create damage circle
-    var impact = new Impact(this.pos, this.stats.radius);
+    var impact = new Impact(this.pos, this.stats.radius, this.stats.damage);
     impacts.push(impact);
     this.die();
   }
@@ -88,25 +89,35 @@ class Projectile {
 }
 
 class Impact {
-  constructor(position, radius) {
+  constructor(position, radius, damage) {
     if (!radius)
       radius = 100;
     this.pos = position;
     this.radius = radius;
     this.alive = true;
+    this.damage = damage;
 
     this.stroke = '#000';
     this.fill = '#9a9a9a';//'#ffaa00';
     this.alpha = 1;
 
     this.damageHoundsInside();
+    this.damageCitiesInside();
   }
 
   damageHoundsInside() {
     var impact = this;
     hounds.forEach(function (hound) {
       if (distanceBetween(hound.pos, impact.pos) < impact.radius)
-        hound.hurt(50);
+        hound.hurt(rollDice(6, impact.damage));
+    });
+  }
+
+  damageCitiesInside() {
+    var impact = this;
+    cities.forEach(function (city) {
+      if (distanceBetween(city.pos, impact.pos) < impact.radius)
+        city.hurt(rollDice(6, impact.damage));
     });
   }
 

@@ -25,9 +25,11 @@ var houndClassStats = {
     ac: 6 + rollDice(4, 1),
     speed: 6,
     sightRange: 600,
-    projectileSpeed: 3,
+    projectileSpeed: 14,
     projectileRadius: 20,
-    homingProjectiles: false
+    projectileDamage: 1,
+    homingProjectiles: false,
+    attackCooldown: 3000
   },
   soldier: {
     level: 1,
@@ -37,7 +39,9 @@ var houndClassStats = {
     sightRange: 250,
     projectileSpeed: 2,
     projectileRadius: 45,
-    homingProjectiles: false
+    projectileDamage: 2,
+    homingProjectiles: false,
+    attackCooldown: 3000
   },
   artillery: {
     level: 1,
@@ -47,7 +51,9 @@ var houndClassStats = {
     sightRange: 100,
     projectileSpeed: 7,
     projectileRadius: 100,
-    homingProjectiles: false
+    projectileDamage: 5,
+    homingProjectiles: false,
+    attackCooldown: 5000
   },
   weakling: {
     level: 1,
@@ -57,7 +63,9 @@ var houndClassStats = {
     sightRange: 100,
     projectileSpeed: 3,
     projectileRadius: 40,
-    homingProjectiles: false
+    projectileDamage: 1,
+    homingProjectiles: false,
+    attackCooldown: 5000
   }
 }
 
@@ -186,6 +194,7 @@ function update() {
     projectiles = removeDead(projectiles);
     impacts = removeDead(impacts);
     trailDots = removeDead(trailDots);
+    cities = removeDead(cities);
 
     graphics.render();
     return;
@@ -196,6 +205,7 @@ function update() {
   map.update();
 
   hounds.forEach(function (h) { h.update(); });
+  cities.forEach(function (c) { c.update(); });
   projectiles.forEach(function (p) { p.update(); });
   impacts.forEach(function (i) { i.update(); });
   trailDots.forEach(function (t) { t.update(); });
@@ -204,6 +214,7 @@ function update() {
   projectiles = removeDead(projectiles);
   impacts = removeDead(impacts);
   trailDots = removeDead(trailDots);
+  cities = removeDead(cities);
 
   checkWinCondition();
 
@@ -252,6 +263,7 @@ function updateAllDisplays() {
 
 //Print a message to the console window
 function addMessage(text, color, delay, includesDonger) {
+  console.log(text);
   if (output.numMessages >= constants.maxMessages) {
     output.console.removeChild(output.console.firstChild);
   }

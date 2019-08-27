@@ -1,4 +1,5 @@
 var houndMovementMultiplier = 0.03;
+var aiThinkInterval = 3000;
 
 class Hound {
   constructor(id, name, position, team, stats) {
@@ -17,6 +18,10 @@ class Hound {
       this.stats = houndClassStats.soldier;
     } else
       this.stats = stats;
+    
+    this.cooldowns = {
+      attack: 0
+    }
 
     this.stroke = '#fff';
     this.fill = colors_primary[team];
@@ -33,7 +38,7 @@ class Hound {
       this.wander();
     var me = this;
     this.think();
-    this.thinkInterval = setInterval(function () { me.think(); }, 8000);
+    this.thinkInterval = setInterval(function () { me.think(); }, aiThinkInterval);
   }
 
   think() {
@@ -44,8 +49,16 @@ class Hound {
     }).filter(function (playerHound) {
       return distanceBetween(playerHound.pos, me.pos) < me.stats.sightRange;
     });
+    
+    var citiesInRange = cities.filter(function (city) {
+      return distanceBetween(city.pos, me.pos) < me.stats.sightRange;
+    })
 
-    var target = getRandom(playerHoundsInRange);
+    var target = getRandom(citiesInRange);
+    
+    if (!target)
+      target = getRandom(playerHoundsInRange);
+    
     if (!target)
       return;
 
@@ -114,9 +127,18 @@ class Hound {
       this.stats.speedPenalty = this.currentRegion.movecost;
     else
       this.stats.speedPenalty = 0;
+    
+    this.updateCooldowns();
 
     this.updateBounds();
     this.updateMovement();
+  }
+  
+  updateCooldowns() {
+    if (this.cooldowns.attack > 0)
+      this.cooldowns.attack -= timeStep;
+    else
+      this.cooldowns.attack = 0;
   }
 
   onInspect() {
@@ -164,7 +186,14 @@ class Hound {
     });
 
     for (var i = 0; i < playerHounds.length; i++) {
-      if (distanceBetween(playerHounds[i].pos, this.pos) < playerHounds[i].stats.sightRange)
+      if (distanceBetween(playerHounds[i].pos, this.pos) <
+          playerHounds[i].stats.sightRange)
+        return true;
+    }
+
+    for (var i = 0; i < cities.length; i++) {
+      if (distanceBetween(cities[i].pos, this.pos) <
+          cities[i].stats.sightRange)
         return true;
     }
 
@@ -184,6 +213,11 @@ class Hound {
   }
 
   attack(target) {
+    if (this.cooldowns.attack > 0) {
+      addMessage(this.name + " cannot fire - reloading");
+      return; 
+    }
+    this.cooldowns.attack = this.stats.attackCooldown;
     projectiles.push(new Projectile(this, target));
     addMessage(this.name + ' WEAPON DISCHARGE');
   }

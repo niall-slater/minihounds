@@ -112,12 +112,12 @@ var graphics = {
     //Render impacts
     impacts.forEach(function (i) { i.render() });
 
-    //Render vision circles
-    var playerHounds = hounds.filter(
-      function (hound) { return hound.team === playerTeam });
-    playerHounds.forEach(function (hound) {
-      hound.renderSightRange();
+    //Render vision 
+    hounds.forEach(function (h) {
+      if (this.team === playerTeam)
+        h.renderSightRange();
     });
+    cities.forEach(function (c) { c.renderSightRange() });
   },
 
   drawDot: function (x, y, size, color, label, labelColor) {
