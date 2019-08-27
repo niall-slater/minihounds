@@ -99,16 +99,3 @@ body {
   padding: 4px;
   width: 20%;
 }
-
-#codex-content {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  flex-direction: row;
-}
-
-#codex-content .card {
-  margin: 4px;
-  box-shadow: 4px 4px 4px rgba(0,0,0,0.2);
-  padding: 14px;
-}

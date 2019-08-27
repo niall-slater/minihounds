@@ -1,49 +1,60 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Additional CSS -->
-    <link rel="stylesheet" href="./css/main.css">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <title>MiniHounds</title>
-  </head>
-  <body>
+  <!-- Additional CSS -->
+  <link rel="stylesheet" href="./css/main.css">
 
-    <div class="console">
-      <ul id="output-console">
-      </ul>
-      <div class="console-input-wrapper">
-        <input id="input-console">
-        <button class="btn-console" onclick="sendCommand()">EXECUTE</button>
-      </div>
+  <title>MiniHounds</title>
+</head>
+
+<body>
+
+  <div class="console">
+    <ul id="output-console">
+    </ul>
+    <div class="console-input-wrapper">
+      <input id="input-console">
+      <button class="btn-console" onclick="sendCommand()">EXECUTE</button>
     </div>
-    
-    <div class="container mt-5">
-      <canvas id="output-canvas" style="border: 2px solid black; background: linear-gradient(darkgreen, black);"></canvas>
-    </div>
+  </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <div class="container mt-5">
+    <canvas id="output-canvas" style="border: 2px solid black; background: linear-gradient(darkgreen, black);"></canvas>
+  </div>
 
-    <!-- Additional scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/16.3.5/Tween.min.js"></script>
-    <script src="https://d3js.org/d3-voronoi.v1.min.js"></script>
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
 
-    <script type="text/javascript" src="./data/stats.js?v0.04"></script>
-    <script type="text/javascript" src="./js/commands.js?v0.04"></script>
-    <script type="text/javascript" src="./js/hound.js?v0.04"></script>
-    <script type="text/javascript" src="./js/projectile.js?v0.04"></script>
-    <script type="text/javascript" src="./js/map.js?v0.04"></script>
-    <script type="text/javascript" src="./js/graphics.js?v0.04"></script>
-    <script type="text/javascript" src="./js/main.js?v0.04"></script>
-  </body>
+  <!-- Additional scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/16.3.5/Tween.min.js"></script>
+  <script src="https://d3js.org/d3-voronoi.v1.min.js"></script>
+
+  <script type="text/javascript" src="./data/stats.js?v0.04"></script>
+  <script type="text/javascript" src="./js/commands.js?v0.04"></script>
+  <script type="text/javascript" src="./js/hound.js?v0.04"></script>
+  <script type="text/javascript" src="./js/projectile.js?v0.04"></script>
+  <script type="text/javascript" src="./js/city.js?v0.04"></script>
+  <script type="text/javascript" src="./js/map.js?v0.04"></script>
+  <script type="text/javascript" src="./js/graphics.js?v0.04"></script>
+  <script type="text/javascript" src="./js/main.js?v0.04"></script>
+</body>
+
 </html>

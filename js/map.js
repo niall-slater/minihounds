@@ -86,7 +86,15 @@ class Map {
       poly.movecost = type.movecost;
       poly.defence = type.defence;
       poly.name = getRandom(city_names);
-      poly.center = getCenterOfPolygon(poly);
+      poly.center = {
+        x: getCenterOfPolygon(poly)[0],
+        y: getCenterOfPolygon(poly)[1]
+      };
+
+      if (Math.random() < .5 && poly.type.toLowerCase() != 'lake') {
+        var size = 15 + Math.floor(Math.random() * 50);
+        cities.push(new City(poly, size, '#eee'));
+      }
     });
     console.log('Mapdata:', this.mapData);
   }

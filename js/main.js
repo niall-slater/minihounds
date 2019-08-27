@@ -5,6 +5,7 @@ var hounds = [];
 var projectiles = [];
 var impacts = [];
 var trailDots = [];
+var cities = [];
 
 var playerTeam = 0;
 

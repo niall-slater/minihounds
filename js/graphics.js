@@ -93,12 +93,12 @@ var graphics = {
 
     map.mapData.polygons.forEach(function (region) {
       graphics.drawText(region.name + " " + region.type,
-        region.center[0] - 100 + 2,
-        region.center[1] + 2, '#000', 24);
-      graphics.drawText(region.name + " " + region.type,
-        region.center[0] - 100,
-        region.center[1], '#fff', 24);
+        region.center.x - 100,
+        region.center.y, '#fff', 24);
     });
+
+    //Render cities
+    cities.forEach(function (c) { c.render() });
 
     //Render hounds
     hounds.forEach(function (h) { h.render() });
@@ -125,8 +125,8 @@ var graphics = {
     this.ctx.setLineDash([0]);
     this.ctx.arc(x, y, size / 2, 0, 2 * Math.PI);
     if (color)
-      this.ctx.strokeStyle = color;
-    this.ctx.stroke();
+      this.ctx.fillStyle = color;
+    this.ctx.fill();
 
     if (label) {
       this.ctx.fillStyle = labelColor;
@@ -138,6 +138,27 @@ var graphics = {
       this.ctx.moveTo(x + size / 2, y - size / 2);
       this.ctx.lineTo(x + size / 2 + 10, y - size / 2 - 10);
       this.ctx.stroke();
+      this.ctx.setLineDash([0]);
+    }
+  },
+
+  drawRect: function (x, y, width, height, fill, stroke, label, labelColor) {
+    this.ctx.rect(x - width / 2, y - height / 2, width, height);
+    this.ctx.fillStyle = fill;
+    this.ctx.fill();
+    this.ctx.strokeStyle = stroke;
+    this.ctx.stroke();
+
+    if (label) {
+      this.drawText(label, x + width, y + 4, labelColor, 18);
+
+      this.ctx.beginPath();
+      this.ctx.setLineDash([2]);
+      this.ctx.strokeStyle = fill;
+      this.ctx.moveTo(x + width / 2, y);
+      this.ctx.lineTo(x + width / 2 + 10, y);
+      this.ctx.stroke();
+      this.ctx.setLineDash([0]);
     }
   },
 
@@ -167,15 +188,19 @@ var graphics = {
       this.ctx.stroke();
   },
 
-  drawText: function (text, x, y, color, size) {
+  drawText: function (text, x, y, color, size, alpha) {
+    text = text.toUpperCase();
+    if (!alpha)
+      this.ctx.globalAlpha = .5;
     if (color)
       this.ctx.fillStyle = color;
     else
       this.ctx.fillStyle = '#fff'
-    this.ctx.font = '30px fantasy';
+    this.ctx.font = '30px sans-serif';
     if (size)
-      this.ctx.font = size + 'px fantasy';
+      this.ctx.font = size + 'px sans-serif';
     this.ctx.fillText(text, x, y);
+    this.ctx.globalAlpha = 1;
   },
 
   drawLine: function (x1, y1, x2, y2, weight, color) {
