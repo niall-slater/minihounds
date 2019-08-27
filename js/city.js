@@ -3,7 +3,7 @@ class City {
     this.region = region;
     this.pos = {
       x: region.center.x,
-      y: region.center.y + 100
+      y: region.center.y
     };
     this.size = size;
     this.alive = true;

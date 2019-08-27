@@ -92,9 +92,10 @@ var graphics = {
     });
 
     map.mapData.polygons.forEach(function (region) {
-      graphics.drawText(region.name + " " + region.type,
-        region.center.x - 100,
-        region.center.y, '#fff', 24);
+      if (!region.city)
+        graphics.drawText(region.name + " " + region.type,
+          region.center.x - 100,
+          region.center.y, '#fff', 24);
     });
 
     //Render cities

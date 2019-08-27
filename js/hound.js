@@ -1,5 +1,6 @@
-var houndMovementMultiplier = 0.03;
+var houndMovementMultiplier = 0.3;
 var aiThinkInterval = 3000;
+var arriveAtLocationTolerance = 10;
 
 class Hound {
   constructor(id, name, position, team, stats) {
@@ -8,6 +9,8 @@ class Hound {
     this.pos = position;
     this.movement = { x: 0, y: 0 };
     this.moveTarget = null;
+
+    this.tasks = [];
 
     this.visible = false;
     this.alive = true;
@@ -26,6 +29,7 @@ class Hound {
     this.stroke = '#fff';
     this.fill = colors_primary[team];
     this.team = team;
+    
     this.ai = team != playerTeam;
     if (this.ai)
       this.startAi();
@@ -34,14 +38,17 @@ class Hound {
   }
 
   startAi() {
-    if (Math.random() > .5)
-      this.wander();
+    if (Math.random() > -1)
+      this.startWanderBehaviour();
+    else
+      this.startAssaultBehaviour();
     var me = this;
     this.think();
     this.thinkInterval = setInterval(function () { me.think(); }, aiThinkInterval);
   }
 
   think() {
+    return;
     var me = this;
 
     var playerHoundsInRange = hounds.filter(function (hound) {
@@ -68,7 +75,7 @@ class Hound {
     }
   }
 
-  moveTo(target, nextTask) {
+  moveTo(target) {
     var targetRegion = map.getRegionAt(target.x, target.y);
     this.moveTarget = target;
 
@@ -88,6 +95,14 @@ class Hound {
     this.moveTarget = null;
     this.movement.x = 0;
     this.movement.y = 0;
+  }
+
+
+  updateCooldowns() {
+    if (this.cooldowns.attack > 0)
+      this.cooldowns.attack -= timeStep;
+    else
+      this.cooldowns.attack = 0;
   }
 
   updateBounds() {
@@ -117,6 +132,24 @@ class Hound {
     if (distanceBetween(this.moveTarget, this.pos) < 10)
       this.stopMoving()
   }
+  
+  updateTasks() {
+    var currentTask = this.tasks[0];
+    if (!currentTask)
+      return;
+
+    if (currentTask.isComplete)
+      this.tasks.shift();
+
+    currentTask = this.tasks[0];
+    if (!currentTask)
+      return;
+
+    if (!currentTask.inProgress)
+      currentTask.start();
+    
+    currentTask.update();
+  }
 
   update() {
     if (!this.alive)
@@ -132,15 +165,9 @@ class Hound {
 
     this.updateBounds();
     this.updateMovement();
+    
+    this.updateTasks();
   }
-  
-  updateCooldowns() {
-    if (this.cooldowns.attack > 0)
-      this.cooldowns.attack -= timeStep;
-    else
-      this.cooldowns.attack = 0;
-  }
-
   onInspect() {
     addMessage(this.name + ": lvl" + this.stats.level, colors.text);
   }
@@ -168,8 +195,8 @@ class Hound {
   render() {
     if (!this.alive)
       return;
-    if (!this.inSightRange())
-      return;
+    //if (!this.inSightRange())
+    //  return;
     graphics.drawPolygon(this.poly, this.stroke, this.fill);
     graphics.drawText(this.name, this.pos.x - 32, this.pos.y + 34, this.fill, 22);
     graphics.drawText(this.name, this.pos.x - 34, this.pos.y + 32, '#fff', 22);
@@ -206,11 +233,39 @@ class Hound {
     this.alive = false;
   }
 
-  wander() {
+  ///////////////////
+  /* AI Behaviours */
+  ///////////////////
+  
+  startWanderBehaviour() {
     var target = { x: Math.random() * settings.mapWidth, y: Math.random() * settings.mapHeight / 2 };
-    var repeat = function (hound) { hound.wander(); }
-    this.moveTo(target, repeat);
+    var hound = this;
+
+    var task = new Task(
+      hound,
+      hound.moveTo,
+      [target],
+      function() {return distanceBetween(hound.pos, target) < arriveAtLocationTolerance},
+      hound.startWanderBehaviour,
+      []
+    );
+    
+    hound.tasks.push(task);
   }
+  
+  startAssaultBehaviour() {
+    //this.tasks.length = 0;
+    var target = getClosest(cities, this);
+    if (!target)
+      return;
+    //tasks.push({task: this.attack, subject: target});
+    var moveTarget = getRandomPointNear(
+      target, this.stats.sightRange, 
+      this.stats.projectileRadius + 15);
+    this.moveTo(moveTarget);
+  }
+  
+  /* END AI Behaviours */
 
   attack(target) {
     if (this.cooldowns.attack > 0) {
@@ -221,12 +276,4 @@ class Hound {
     projectiles.push(new Projectile(this, target));
     addMessage(this.name + ' WEAPON DISCHARGE');
   }
-}
-
-function distanceBetween(a, b) {
-  //a and b are {x: value, y: value} objects
-  var xdiff = a.x - b.x;
-  var ydiff = a.y - b.y;
-  var distance = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
-  return distance;
 }

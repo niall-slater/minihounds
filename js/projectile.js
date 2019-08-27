@@ -98,7 +98,7 @@ class Impact {
     this.damage = damage;
 
     this.stroke = '#000';
-    this.fill = '#9a9a9a';//'#ffaa00';
+    this.fill = '#9a9a9a';//'#ffaa00'; for orange
     this.alpha = 1;
 
     this.damageHoundsInside();
