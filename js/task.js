@@ -1,5 +1,5 @@
 class Task {
-  constructor(agent, job, jobParams, completionCheck, onComplete, onCompleteParams) {
+  constructor(agent, job, jobParams, completionCheck, onComplete, onCompleteParams, continuous) {
     this.agent = agent;
     this.job = job;
     this.jobParams = jobParams;
@@ -8,6 +8,7 @@ class Task {
     this.onCompleteParams = onCompleteParams;
     this.isComplete = false;
     this.inProgress = false;
+    this.continuous = continuous;
   }
   
   start() {
@@ -18,10 +19,13 @@ class Task {
   update() {
     if (this.completionCheck.apply(this.agent))
       this.complete();
+    else if (this.continuous)
+      this.job.apply(this.agent, this.jobParams);
   }
   
   complete() {
     this.isComplete = true;
-    this.onComplete.apply(this.agent, this.onCompleteParams);
+    if (this.onComplete)
+      this.onComplete.apply(this.agent, this.onCompleteParams);
   }
 }

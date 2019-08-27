@@ -1,4 +1,4 @@
-var houndMovementMultiplier = 0.3;
+var houndMovementMultiplier = 0.03;
 var aiThinkInterval = 3000;
 var arriveAtLocationTolerance = 10;
 
@@ -31,6 +31,7 @@ class Hound {
     this.team = team;
     
     this.ai = team != playerTeam;
+    var me = this;
     if (this.ai)
       this.startAi();
 
@@ -38,7 +39,7 @@ class Hound {
   }
 
   startAi() {
-    if (Math.random() > -1)
+    if (Math.random() > 1)
       this.startWanderBehaviour();
     else
       this.startAssaultBehaviour();
@@ -48,30 +49,25 @@ class Hound {
   }
 
   think() {
-    return;
     var me = this;
-
+    
     var playerHoundsInRange = hounds.filter(function (hound) {
       return hound.team == playerTeam;
     }).filter(function (playerHound) {
       return distanceBetween(playerHound.pos, me.pos) < me.stats.sightRange;
     });
     
-    var citiesInRange = cities.filter(function (city) {
-      return distanceBetween(city.pos, me.pos) < me.stats.sightRange;
-    })
-
-    var target = getRandom(citiesInRange);
+    var target = getRandom(playerHoundsInRange);
     
-    if (!target)
-      target = getRandom(playerHoundsInRange);
+    if (target) {
+      if (Math.random() > .5) {
+        this.stopMoving();
+        this.attack(target);
+      }
+    }
     
-    if (!target)
-      return;
-
-    if (Math.random() > .5) {
-      this.stopMoving();
-      this.attack(target);
+    if (this.tasks.length === 0) {
+      this.startAssaultBehaviour();
     }
   }
 
@@ -195,8 +191,8 @@ class Hound {
   render() {
     if (!this.alive)
       return;
-    //if (!this.inSightRange())
-    //  return;
+    if (!this.inSightRange())
+      return;
     graphics.drawPolygon(this.poly, this.stroke, this.fill);
     graphics.drawText(this.name, this.pos.x - 32, this.pos.y + 34, this.fill, 22);
     graphics.drawText(this.name, this.pos.x - 34, this.pos.y + 32, '#fff', 22);
@@ -254,22 +250,52 @@ class Hound {
   }
   
   startAssaultBehaviour() {
-    //this.tasks.length = 0;
     var target = getClosest(cities, this);
     if (!target)
       return;
-    //tasks.push({task: this.attack, subject: target});
+    
+    var hound = this;
+    
     var moveTarget = getRandomPointNear(
       target, this.stats.sightRange, 
       this.stats.projectileRadius + 15);
-    this.moveTo(moveTarget);
+    
+    var completionCheck = function() {
+      return distanceBetween(hound.pos, moveTarget) < arriveAtLocationTolerance;
+    }
+    
+    var taskMove = new Task(
+      hound,
+      hound.moveTo,
+      [moveTarget],
+      completionCheck,
+      hound.startBombardBehaviour,
+      [target]
+    );
+    
+    this.tasks.push(taskMove);
+  }
+  
+  startBombardBehaviour(target) {
+    var taskAttack = new Task(
+      this,
+      this.attack,
+      [target],
+      function(){return !target.alive},
+      null,
+      [],
+      true
+    );
+    
+    this.tasks.push(taskAttack);
   }
   
   /* END AI Behaviours */
 
   attack(target) {
     if (this.cooldowns.attack > 0) {
-      addMessage(this.name + " cannot fire - reloading");
+      if (this.team === playerTeam)
+        addMessage(this.name + " cannot fire - reloading");
       return; 
     }
     this.cooldowns.attack = this.stats.attackCooldown;

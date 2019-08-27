@@ -86,7 +86,7 @@ function getClosest(array, seeker) {
   var dist = Number.POSITIVE_INFINITY;
   var result = null;
   for (var i = 0; i < array.length; i++) {
-    var test = distanceBetween(seeker, array[i]);
+    var test = distanceBetween(seeker.pos, array[i].pos);
     if (test < dist) {
       dist = test;
       result = array[i];

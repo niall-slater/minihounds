@@ -176,7 +176,7 @@ function win() {
 }
 
 function lose() {
-  addMessage('ALL HOUNDS LOST. SIMULATION COMPLETE');
+  addMessage('ALL HOUNDS OR CITIES LOST. SIMULATION COMPLETE');
   settings.paused = true;
 }
 
@@ -227,7 +227,7 @@ function checkWinCondition() {
     return hound.team == playerTeam;
   });
 
-  if (playerHounds.length == 0)
+  if (playerHounds.length == 0 || cities.length == 0)
     lose();
 
   var enemyHounds = hounds.filter(function (hound) {
