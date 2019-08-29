@@ -104,11 +104,11 @@ var graphics = {
     //Render hounds
     hounds.forEach(function (h) { h.render() });
 
-    //Render projectiles
-    projectiles.forEach(function (p) { p.render() });
-
     //Render traildots
     trailDots.forEach(function (t) { t.render() });
+
+    //Render projectiles
+    projectiles.forEach(function (p) { p.render() });
 
     //Render impacts
     impacts.forEach(function (i) { i.render() });

@@ -17,7 +17,6 @@ body {
 }
 
 .console {
-  display: none;
   background: #000;
   bottom: 38px;
   border: 1px solid #050;
@@ -31,8 +30,14 @@ body {
   overflow-x: hidden;
   overflow-y: scroll;
   opacity: .8;
-  width: 500px;
+  width: 20%;
   z-index: 5;
+}
+
+@media (max-width: 1200px) {
+  .console {
+    width: 35%;
+  }
 }
 
 .map {

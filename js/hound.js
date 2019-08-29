@@ -258,7 +258,7 @@ class Hound {
     
     var moveTarget = getRandomPointNear(
       target, this.stats.sightRange, 
-      this.stats.projectileRadius + 15);
+      this.stats.projectileRadius + target.stats.sightRange);
     
     var completionCheck = function() {
       return distanceBetween(hound.pos, moveTarget) < arriveAtLocationTolerance;

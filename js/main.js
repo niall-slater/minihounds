@@ -61,11 +61,11 @@ var houndClassStats = {
     ac: 6 + rollDice(3, 1),
     speed: 1,
     sightRange: 100,
-    projectileSpeed: 3,
+    projectileSpeed: 1,
     projectileRadius: 40,
     projectileDamage: 1,
     homingProjectiles: false,
-    attackCooldown: 5000
+    attackCooldown: 10000
   }
 }
 

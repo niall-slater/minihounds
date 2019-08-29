@@ -15,15 +15,15 @@ class Projectile {
     }
 
     this.stroke = '#fff';
-    this.fill = '#333';
+    this.fill = '#fff';
     this.origin = { x: creator.pos.x, y: creator.pos.y };
 
     this.moveTo(target.pos);
-    var dotSpawnInterval = 200;
+    var dotSpawnInterval = 1000;
     var me = this;
     this.trailInterval = setInterval(function () {
       me.spawnTrailDot()
-    }, 200);
+    }, dotSpawnInterval);
   }
 
   moveTo(moveTarget) {
@@ -70,16 +70,39 @@ class Projectile {
   }
 
   spawnTrailDot() {
-    if (!this.alive)
+    if (!this.alive || !this.inSightRange())
       return;
-    trailDots.push(new TrailDot(this.pos, 2, this.fill));
+    trailDots.push(new TrailDot(this.pos, 5, '#fff'));
   }
 
   render() {
     if (!this.alive)
       return;
+    
+    if (!this.inSightRange())
+      return;
 
-    graphics.drawDot(this.pos.x, this.pos.y, 4, this.creator.fill)
+    graphics.drawDot(this.pos.x, this.pos.y, 8, '#000')
+  }
+
+  inSightRange() {
+    var playerHounds = hounds.filter(function (hound) {
+      return hound.team == playerTeam;
+    });
+
+    for (var i = 0; i < playerHounds.length; i++) {
+      if (distanceBetween(playerHounds[i].pos, this.pos) <
+          playerHounds[i].stats.sightRange)
+        return true;
+    }
+
+    for (var i = 0; i < cities.length; i++) {
+      if (distanceBetween(cities[i].pos, this.pos) <
+          cities[i].stats.sightRange)
+        return true;
+    }
+
+    return false;
   }
 
   die() {
@@ -98,7 +121,7 @@ class Impact {
     this.damage = damage;
 
     this.stroke = '#000';
-    this.fill = '#9a9a9a';//'#ffaa00'; for orange
+    this.fill = '#ffaa00';//'#9a9a9a'; for grey
     this.alpha = 1;
 
     this.damageHoundsInside();
@@ -174,7 +197,7 @@ class TrailDot {
   update() {
     if (!this.alive)
       return;
-    var trailLifetime = 2000;
+    var trailLifetime = 10000;
     if (this.alpha > 0)
       this.alpha -= timeStep / trailLifetime;
     else {
@@ -186,6 +209,7 @@ class TrailDot {
   render() {
     if (!this.alive)
       return;
+
     graphics.ctx.globalAlpha = this.alpha;
     graphics.drawDot(this.pos.x, this.pos.y, this.radius,
       this.fill);
