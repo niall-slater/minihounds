@@ -159,8 +159,6 @@ function start() {
     addMessage(hound.name.toUpperCase() + " READY", colors_computer[4], 1350);
   });
   addMessage('Hounds awaiting commands.', null, 2500);
-  addMessage('Try the following:', '#eee', 3000);
-  addMessage('SCOUT MOVE N 250', '#fff', 3500);
 }
 
 function win() {
