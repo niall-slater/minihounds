@@ -13,12 +13,16 @@ function parseCommand(command) {
         addMessage('invalid command');
         return;
       }
-      var movement = [0, 0];
+      var movement = [0, -Math.abs(parseInt(args[1]))];
       switch (args[0]) {
-        case 'n': movement = [0, -Math.abs(parseInt(args[1]))]; break;
-        case 'e': movement = [parseInt(args[1]), 0]; break;
-        case 's': movement = [0, parseInt(args[1])]; break;
-        case 'w': movement = [-Math.abs(parseInt(args[1])), 0]; break;
+        case 'n': movement = rotateVector(movement, 0); break;
+        case 'ne': movement = rotateVector(movement, 45); break;
+        case 'e': movement = rotateVector(movement, 90); break;
+        case 'se': movement = rotateVector(movement, 135); break;
+        case 's': movement = rotateVector(movement, 180); break;
+        case 'sw': movement = rotateVector(movement, 225); break;
+        case 'w': movement = rotateVector(movement, 270); break;
+        case 'nw': movement = rotateVector(movement, 315); break;
         default: break;
       }
       var subject = getNamedPlayerHound(name);
@@ -132,4 +136,12 @@ function isInside(point, polygon) {
   }
 
   return inside;
+};
+
+function rotateVector(vec, ang)
+{
+    ang = ang * (Math.PI/180);
+    var cos = Math.cos(ang);
+    var sin = Math.sin(ang);
+    return new Array(Math.round(10000*(vec[0] * cos - vec[1] * sin))/10000, Math.round(10000*(vec[0] * sin + vec[1] * cos))/10000);
 };
