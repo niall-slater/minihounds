@@ -57,13 +57,6 @@ function parseCommand(command) {
   }
 }
 
-function parseCoords(x, y) {
-  var scale = 20.48;
-  var result = [parseFloat(x) * scale,
-                  parseFloat(y) * scale];
-  return result;
-}
-
 function getNamedPlayerHound(name) {
   return getPlayerHounds().find(
     (hound) => { return hound.name === name }
@@ -82,6 +75,20 @@ function recallLastCommand() {
 }
 
 /* GENERIC HELPER FUNCTIONS */
+
+function parseCoords(x, y) {
+  var scale = 20.48;
+  var result = [parseFloat(x) * scale,
+                  parseFloat(y) * scale];
+  return result;
+}
+
+function parsePixels(x, y) {
+  var scale = 20.48;
+  var result = [parseFloat(x) / scale,
+                  parseFloat(y) / scale];
+  return result;
+}
 
 function distanceBetween(a, b) {
   //a and b are {x: value, y: value} objects

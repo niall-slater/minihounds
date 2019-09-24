@@ -300,7 +300,8 @@ class Hound {
     }
     this.cooldowns.attack = this.stats.attackCooldown;
     projectiles.push(new Projectile(this, target, true));
-    addMessage(this.name + ' WEAPON DISCHARGE');
+    var coords = parsePixels(this.pos.x, this.pos.y);
+    addMessage('WEAPON DISCHARGE DETECTED AT ' + Math.round(coords[0]) + ', ' + Math.round(coords[1]));
   }
   attackPoint(target) {
     if (this.cooldowns.attack > 0) {

@@ -112,11 +112,9 @@ var graphics = {
         var lineX = x * (settings.mapWidth / division);
         var lineY = y * (settings.mapHeight / division);
         graphics.drawText("" + x * 10, lineX - 20, -20);
-        graphics.drawText("" + lineX, lineX - 20, -20 + 50);
         graphics.drawLine(0, lineY, settings.mapWidth, lineY,
                           1, 'rgba(255,255,255,0.1)', []);
         graphics.drawText("" + y * 10, -40, lineY + 10);
-        graphics.drawText("" + lineY, -40, lineY + 10 + 50);
         graphics.drawLine(lineX, 0, lineX, settings.mapHeight,
                           1, 'rgba(255,255,255,0.1)', []);
       }
