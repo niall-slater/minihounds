@@ -97,6 +97,29 @@ var graphics = {
           region.center.x - 100,
           region.center.y, '#fff', 24);
     });
+    
+    //Render grid
+    var division = 10;
+    /*
+      this is a slightly hacky solution to prevent numbers drawing over
+      each other - if graphical glitches occur near the edge of the map,
+      this code may be the cause
+    */
+    graphics.ctx.clearRect(-100, -100, 100, settings.gameHeight + 100);
+    graphics.ctx.clearRect(-100, -100, settings.gameWidth + 100, 100);
+    for (var y = 0; y < division + 1; y++) {
+      for (var x = 0; x < division + 1; x++) {
+        var lineX = x * (settings.mapWidth / division);
+        var lineY = y * (settings.mapHeight / division);
+        
+        graphics.drawText("" + x * 10, lineX - 20, -20);
+        graphics.drawLine(0, lineY, settings.mapWidth, lineY,
+                          1, 'rgba(255,255,255,0.1)', []);
+        graphics.drawText("" + y * 10, -40, lineY + 10);
+        graphics.drawLine(lineX, 0, lineX, settings.mapHeight,
+                          1, 'rgba(255,255,255,0.1)', []);
+      }
+    }
 
     //Render cities
     cities.forEach(function (c) { c.render() });
@@ -204,9 +227,12 @@ var graphics = {
     this.ctx.globalAlpha = 1;
   },
 
-  drawLine: function (x1, y1, x2, y2, weight, color) {
+  drawLine: function (x1, y1, x2, y2, weight, color, dash) {
     this.ctx.beginPath();
-    this.ctx.setLineDash([2]);
+    if (!dash)
+      this.ctx.setLineDash([2]);
+    else
+      this.ctx.setLineDash(dash);
     if (weight)
       this.ctx.lineWidth = weight;
     if (color)
