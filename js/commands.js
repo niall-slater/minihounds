@@ -13,25 +13,12 @@ function parseCommand(command) {
         addMessage('invalid command');
         return;
       }
-      var movement = [0, -Math.abs(parseInt(args[1]))];
-      switch (args[0]) {
-        case 'n': movement = rotateVector(movement, 0); break;
-        case 'ne': movement = rotateVector(movement, 45); break;
-        case 'e': movement = rotateVector(movement, 90); break;
-        case 'se': movement = rotateVector(movement, 135); break;
-        case 's': movement = rotateVector(movement, 180); break;
-        case 'sw': movement = rotateVector(movement, 225); break;
-        case 'w': movement = rotateVector(movement, 270); break;
-        case 'nw': movement = rotateVector(movement, 315); break;
-        default: break;
-      }
+      var coords = parseCoords(args[0], args[1]);
       var subject = getNamedPlayerHound(name);
-      var x = parseInt(movement[0]);
-      var y = parseInt(movement[1]);
       var moveCommand =
       {
-        x: subject.pos.x + x,
-        y: subject.pos.y + y
+        x: coords[0],
+        y: coords[1]
       };
       subject.moveTo(moveCommand);
       break;
@@ -43,20 +30,38 @@ function parseCommand(command) {
     }
     case 'attack': {
       var subject = getNamedPlayerHound(name);
-      if (args.length != 1) {
+      if (args.length < 1) {
         addMessage('invalid command');
         return;
       }
-      var target = getNamedHound(args[0]);
-      if (!target || !target.inSightRange()) {
-        addMessage('Cannot acquire target "' + args[0] + '"');
-        return;
+      if (args.length == 1) {
+        var target = getNamedHound(args[0]);
+        if (!target || !target.inSightRange()) {
+          addMessage('Cannot acquire target "' + args[0] + '"');
+          return;
+        }
+        subject.attack(target);
+        break;
+      } else if (args.length == 2) {
+        var coords = parseCoords(args[0], args[1]);
+        var attackCommand =
+        {
+          x: coords[0],
+          y: coords[1]
+        };
+        subject.attackPoint(attackCommand);
+        break;
       }
-      subject.attack(target);
-      break;
     }
     default: break;
   }
+}
+
+function parseCoords(x, y) {
+  var scale = 20.48;
+  var result = [parseFloat(x) * scale,
+                  parseFloat(y) * scale];
+  return result;
 }
 
 function getNamedPlayerHound(name) {

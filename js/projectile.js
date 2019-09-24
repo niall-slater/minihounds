@@ -1,8 +1,9 @@
 class Projectile {
-  constructor(creator, target) {
+  constructor(creator, target, targetingHound) {
     this.pos = { x: creator.pos.x, y: creator.pos.y };
     this.creator = creator;
     this.target = target;
+    this.targetingHound = targetingHound;
 
     this.discovered = false;
     this.alive = true;
@@ -17,8 +18,12 @@ class Projectile {
     this.stroke = '#fff';
     this.fill = '#fff';
     this.origin = { x: creator.pos.x, y: creator.pos.y };
+    
+    if (this.targetingHound)
+      this.moveTo(target.pos);
+    else
+      this.moveTo(target);
 
-    this.moveTo(target.pos);
     var dotSpawnInterval = 1000;
     var me = this;
     this.trailInterval = setInterval(function () {

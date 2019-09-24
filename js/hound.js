@@ -299,7 +299,17 @@ class Hound {
       return; 
     }
     this.cooldowns.attack = this.stats.attackCooldown;
-    projectiles.push(new Projectile(this, target));
+    projectiles.push(new Projectile(this, target, true));
+    addMessage(this.name + ' WEAPON DISCHARGE');
+  }
+  attackPoint(target) {
+    if (this.cooldowns.attack > 0) {
+      if (this.team === playerTeam)
+        addMessage(this.name + " cannot fire - reloading");
+      return; 
+    }
+    this.cooldowns.attack = this.stats.attackCooldown;
+    projectiles.push(new Projectile(this, target, false));
     addMessage(this.name + ' WEAPON DISCHARGE');
   }
 }
