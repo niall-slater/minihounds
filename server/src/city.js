@@ -9,8 +9,8 @@ class City {
     this.alive = true;
     
     this.stats = {
-      hp: 20,
-      sightRange: 250
+      hp: rollDice(20, 3),
+      sightRange: 200 + rollDice(20, 5)
     }
 
     this.name = region.name + ' City';
@@ -20,17 +20,6 @@ class City {
   update() {
     if (!this.alive)
       return;
-  }
-
-  render() {
-    if (!this.alive)
-      return;
-    graphics.drawRect(this.pos.x, this.pos.y, this.size, this.size, this.fill, '#333', this.name, '#000')
-  }
-
-  renderSightRange() {
-    graphics.drawCircle(this.pos.x, this.pos.y,
-      this.stats.sightRange, '#fff');
   }
 
   hurt(amount) {

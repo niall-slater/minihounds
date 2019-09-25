@@ -1,73 +1,19 @@
+var ioClient = io.connect("http://localhost:3000");
+
+ioClient.on("test", (msg) => addMessage(msg));
+ioClient.on("console", (msg) => console.log(msg));
+ioClient.on("mapseed", (seed) => createMap(144, seed));
+
 var timeStep = 10;
+
 var map;
-
-var hounds = [];
-var projectiles = [];
-var impacts = [];
-var trailDots = [];
-var cities = [];
-
-var playerTeam = 0;
 
 var settings = {
   gameWidth: 800,
   gameHeight: 600,
   mapWidth: 2048,
-  mapHeight: 2048,
-  difficulty: 1
+  mapHeight: 2048
 };
-
-// Class defintions
-var houndClassStats = {
-  scout: {
-    level: 1,
-    hp: 6 + rollDice(6, 1),
-    ac: 6 + rollDice(4, 1),
-    speed: 6,
-    sightRange: 600,
-    projectileSpeed: 14,
-    projectileRadius: 20,
-    projectileDamage: 1,
-    homingProjectiles: false,
-    attackCooldown: 3000
-  },
-  soldier: {
-    level: 1,
-    hp: 12 + rollDice(12, 1),
-    ac: 6 + rollDice(4, 1),
-    speed: 3,
-    sightRange: 250,
-    projectileSpeed: 2,
-    projectileRadius: 45,
-    projectileDamage: 2,
-    homingProjectiles: false,
-    attackCooldown: 3000
-  },
-  artillery: {
-    level: 1,
-    hp: 6 + rollDice(6, 1),
-    ac: 6 + rollDice(4, 1),
-    speed: 1,
-    sightRange: 100,
-    projectileSpeed: 7,
-    projectileRadius: 100,
-    projectileDamage: 5,
-    homingProjectiles: false,
-    attackCooldown: 5000
-  },
-  weakling: {
-    level: 1,
-    hp: 6 + rollDice(4, 1),
-    ac: 6 + rollDice(3, 1),
-    speed: 1,
-    sightRange: 100,
-    projectileSpeed: 1,
-    projectileRadius: 40,
-    projectileDamage: 1,
-    homingProjectiles: false,
-    attackCooldown: 10000
-  }
-}
 
 var constants = {
   maxMessages: 50
@@ -80,20 +26,10 @@ var input = {
 
 var output = {
   console: undefined,
-  alert: undefined,
-  planetList: undefined
+  alert: undefined
 };
 
-var complexity = 144;
-
-var seed = [13, 1, 23, 4, 5, 6,
-  13, 1, 23, 4, 5, 6,
-  13, 1, 23, 4, 5, 6,
-  13, 1, 23, 4, 5, 6];
-
-var voronoiDensity;
-
-function createMap() {
+function createMap(complexity, seed) {
 
   hounds.length = 0;
   projectiles.length = 0;
@@ -104,7 +40,7 @@ function createMap() {
     seed[i] = Math.random() * 2000;
   }
 
-  voronoiDensity = seed.length / 2;
+  var voronoiDensity = seed.length / 2;
 
   map = new Map(seed);
 
@@ -117,13 +53,6 @@ function createMap() {
   hounds.push(new Hound(
     3, 'artillery', { x: settings.gameWidth / 2 + 50, y: settings.gameHeight / 2 - 50 },
     0, houndClassStats.artillery));
-
-  for (var i = 0; i < settings.difficulty * 3; i++) {
-    var randomPos = { x: Math.random() * settings.mapWidth, y: (Math.random() * settings.mapHeight / 2) + settings.mapHeight / 2 };
-    var id = 3 + i;
-    hounds.push(new Hound(id, 'enemy' + id, randomPos, 1,
-      houndClassStats.weakling));
-  }
 }
 
 function getRandomProperty(obj) {
@@ -149,110 +78,36 @@ function setUpElementReferences() {
 function start() {
   $('input').focus();
   graphics.init();
-  setInterval(update, timeStep);
-  createMap();
+  setInterval(localUpdate, timeStep);
   addMessage('System booting...', colors_computer[0], 50);
   addMessage('Please wait...', colors_computer[0], 100);
   addMessage('Reaching hound receivers...', colors_computer[0], 250);
   addMessage('Hounds responding...', colors_computer[0], 1250);
-  getPlayerHounds().forEach(function (hound) {
-    addMessage(hound.name.toUpperCase() + " READY", colors_computer[4], 1350);
-  });
   addMessage('Hounds awaiting commands.', null, 2500);
 }
 
 function win() {
-  addMessage('WAVE CLEARED. REBOOTING...');
-  settings.paused = true;
-
-  setTimeout(function () {
-    settings.paused = false;
-    settings.difficulty++;
-    createMap();
-    addMessage('ENTERING WAVE ' + settings.difficulty);
-  }, 3000);
+  addMessage('WIN?');
 }
 
 function lose() {
-  addMessage('ALL HOUNDS OR CITIES LOST. SIMULATION COMPLETE');
-  settings.paused = true;
+  addMessage('LOSE?');
 }
 
 /* Game functions */
 
-function update() {
+function networkUpdate(serverState) {
+  gameState = serverState;
+}
 
-  updateAllDisplays();
-
-  if (settings.paused) {
-    projectiles.forEach(function (p) { p.update(); });
-    impacts.forEach(function (i) { i.update(); });
-    trailDots.forEach(function (t) { t.update(); });
-
-    projectiles = removeDead(projectiles);
-    impacts = removeDead(impacts);
-    trailDots = removeDead(trailDots);
-    cities = removeDead(cities);
-
-    graphics.render();
-    return;
-  }
-
-  TWEEN.update();
-
-  map.update();
-
-  hounds.forEach(function (h) { h.update(); });
-  cities.forEach(function (c) { c.update(); });
-  projectiles.forEach(function (p) { p.update(); });
-  impacts.forEach(function (i) { i.update(); });
-  trailDots.forEach(function (t) { t.update(); });
-
-  hounds = removeDead(hounds);
-  projectiles = removeDead(projectiles);
-  impacts = removeDead(impacts);
-  trailDots = removeDead(trailDots);
-  cities = removeDead(cities);
-
-  checkWinCondition();
-
+function localUpdate() {
+  /* this is the regular update 
+  there is a separate ad-hoc 
+  update performed when a packet
+  is received from the server */
+  
   //render updated graphics
   graphics.render();
-}
-
-function checkWinCondition() {
-  var playerHounds = hounds.filter(function (hound) {
-    return hound.team == playerTeam;
-  });
-
-  if (playerHounds.length == 0 || cities.length == 0)
-    lose();
-
-  var enemyHounds = hounds.filter(function (hound) {
-    return hound.team != playerTeam;
-  });
-
-  if (enemyHounds.length == 0)
-    win();
-}
-
-function removeDead(array) {
-  return array.filter(function (element) {
-    return element.alive;
-  });
-}
-
-function getPlayerHounds() {
-  return hounds.filter(
-    function (hound) {
-      return hound.team === playerTeam;
-    });
-}
-
-/* UI output functions */
-
-function updateAllDisplays() {
-
 }
 
 /*--------------------*/
@@ -284,59 +139,6 @@ function addMessage(text, color, delay, includesDonger) {
   }, delay);
 }
 
-function addMessageWithLink(linkText, url, delay) {
-  if (output.numMessages >= constants.maxMessages) {
-    output.console.removeChild(output.console.firstChild);
-  }
-
-  var li = document.createElement("li");
-  var linkElement = document.createElement("a");
-  linkElement.textContent = linkText;
-  $(linkElement).attr('href', url);
-  $(linkElement).attr('target', '_blank');
-  li.appendChild(linkElement);
-
-  if (!delay)
-    delay = 0;
-
-  setTimeout(function () {
-    output.console.appendChild(li);
-    output.console.parentElement.scrollTop = output.console.parentElement.scrollHeight;
-    output.numMessages++
-  }, delay);
-}
-
-function addMessageImage(imageSrc, url, delay) {
-
-  if (output.numMessages >= constants.maxMessages) {
-    output.console.removeChild(output.console.firstChild);
-  }
-
-  var li = document.createElement("li");
-  var a = document.createElement("a");
-  var img = document.createElement("img");
-  img.src = imageSrc;
-  $(a).attr('href', url);
-  $(a).attr('target', '_blank');
-  li.appendChild(a);
-  a.appendChild(img);
-
-  if (!delay)
-    delay = 0;
-
-  setTimeout(function () {
-    output.console.appendChild(li);
-    output.console.parentElement.scrollTop = output.console.parentElement.scrollHeight;
-    output.numMessages++
-  }, delay);
-}
-
-function addMessageAscii(arr) {
-  for (var i = 0; i < arr.length; i++) {
-    addMessage(arr[i], colors.normal);
-  }
-}
-
 function sendCommand() {
   var command = input.console.value;
   input.lastCommand = command;
@@ -344,51 +146,6 @@ function sendCommand() {
   addMessage(command);
   parseCommand(command);
 }
-
-/*--------------------*/
-/* SAVE/LOAD DATA
-/*--------------------*/
-
-function saveData() {
-  var statsData = stats;
-  var skillsData = skills;
-
-  setCookie('statsData', statsData);
-  setCookie('skillsData', skillsData);
-}
-
-function loadData() {
-  var statsData = readCookie('statsData');
-  var skillsData = readCookie('skillsData');
-
-  if (!statsData || !skillsData)
-    return;
-
-  stats.age = parseInt(statsData.age);
-  stats.name = statsData.name;
-  stats.power = parseInt(statsData.power);
-  stats.calculations = parseInt(statsData.calculations);
-  stats.children = parseInt(statsData.children);
-  stats.funding = parseInt(statsData.funding);
-
-  skills.power = parseInt(skillsData.power);
-  skills.speed = parseInt(skillsData.speed);
-  skills.networking = parseInt(skillsData.networking);
-  skills.negotiation = parseInt(skillsData.negotiation);
-
-  skills.autocalc = parseBool(skillsData.calculations);
-  skills.autofeed = parseBool(skillsData.calculations);
-
-  for (var i = 0; i < stats.children; i++) {
-    addChildDisplay();
-  }
-}
-
-function clearData() {
-  deleteCookie('statsData');
-  deleteCookie('skillsData');
-}
-
 
 /*--------------------*/
 /* HELPERS

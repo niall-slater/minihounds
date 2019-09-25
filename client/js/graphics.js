@@ -71,6 +71,9 @@ var graphics = {
   },
 
   render: function () {
+    
+    if (!map)
+      return;
 
     this.ctx.save();
 

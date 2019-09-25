@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Socket.IO chat</title>
+    <title>MH server</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
@@ -14,6 +14,14 @@
     </style>
   </head>
   <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript" src="./src/task.js?v0.06"></script>
+  <script type="text/javascript" src="./src/commands.js?v0.06"></script>
+  <script type="text/javascript" src="./src/hound.js?v0.06"></script>
+  <script type="text/javascript" src="./src/projectile.js?v0.06"></script>
+  <script type="text/javascript" src="./src/city.js?v0.06"></script>
+  <script type="text/javascript" src="./src/map.js?v0.06"></script>
+  <script type="text/javascript" src="./src/graphics.js?v0.06"></script>
+  <script type="text/javascript" src="./src/main.js?v0.06"></script>
   <script>
     var socket = io();
   </script>
