@@ -6,15 +6,26 @@ var Game = require('./src/main.js');
 
 var houndGame;
 
+var connections = [];
+var gameStarted = false;
+
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
 io.on('connection', function(socket){
-  var log = 'a user connected';
-  console.log(log);
+  if (gameStarted) {
+    console.log(socket.id, 'rejected, game in progress');
+    return;
+  }
+  console.log(socket.id, 'connected');
+  connections.push(socket);
   socket.emit('test', 'HEWWO??');
-  houndGame = new Game(socket);
+  if (connections.length == 1) {
+    gameStarted = true;
+    console.log('starting game...');
+    houndGame = new Game(connections);
+  }
 });
 
 http.listen(3000, function() {

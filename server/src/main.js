@@ -7,7 +7,7 @@ class GameState {
 }
 
 class Game {
-  constructor(socket) {
+  constructor(sockets) {
     var seed = [13, 1, 23, 4, 5, 6,
                 13, 1, 23, 4, 5, 6,
                 13, 1, 23, 4, 5, 6,
@@ -36,8 +36,12 @@ class Game {
     this.houndClassStats = houndClassStats;
     
     this.players = [];
-    this.players.push(socket);
-    
+
+    for (var i = 0; i < sockets.length; i++) {
+      var player = sockets[i];
+      player.name = 'player ' + i + 1;
+      this.players.push(player); 
+    }
     this.start();
   }
   
