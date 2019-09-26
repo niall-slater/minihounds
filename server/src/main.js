@@ -1,13 +1,116 @@
-var timeStep = 10;
-var map;
+class GameState {
+  constructor(data) {
+    this.data = data;
+  }
+}
 
-var hounds = [];
-var projectiles = [];
-var impacts = [];
-var trailDots = [];
-var cities = [];
+class Game {
+  constructor(socket) {
+    var seed = [13, 1, 23, 4, 5, 6,
+                13, 1, 23, 4, 5, 6,
+                13, 1, 23, 4, 5, 6,
+                13, 1, 23, 4, 5, 6];
+    
+    this.timeStep = 10;
+    this.gameData = {
+      mapSeed: seed,
+      hounds: [],
+      projectiles: [],
+      impacts: [],
+      trailDots: [],
+      cities: []
+    }
 
-var playerTeam = 0;
+    this.gameState = new GameState(this.gameData);
+    
+    this.settings = {
+      gameWidth: 800,
+      gameHeight: 600,
+      mapWidth: 2048,
+      mapHeight: 2048,
+      difficulty: 1
+    };
+    
+    this.houndClassStats = houndClassStats;
+    
+    this.players = [];
+    this.players.push(socket);
+    
+    this.start();
+  }
+  
+
+  start() {
+    setInterval(this.update.bind(this), this.timeStep);
+    this.sendToAllPlayers('mapseed', this.gameData.mapSeed);
+  }
+
+  end() {
+    console.log('game end');
+    this.settings.paused = true;
+  }
+  
+  /* Game functions */
+
+  update() {
+    if (this.settings.paused) {
+      this.gameData.projectiles.forEach(function (p) { p.update(); });
+      this.gameData.impacts.forEach(function (i) { i.update(); });
+      this.gameData.trailDots.forEach(function (t) { t.update(); });
+
+      this.gameData.projectiles = removeDead(this.gameData.projectiles);
+      this.gameData.impacts = removeDead(this.gameData.impacts);
+      this.gameData.trailDots = removeDead(this.gameData.trailDots);
+      this.gameData.cities = removeDead(this.gameData.cities);
+      return;
+    }
+    
+    this.sendToAllPlayers('console', 'update!');
+
+    TWEEN.update();
+
+    this.map.update();
+
+    this.gameData.this.gameData.hounds.forEach(function (h) { h.update(); });
+    this.gameData.cities.forEach(function (c) { c.update(); });
+    this.gameData.projectiles.forEach(function (p) { p.update(); });
+    this.gameData.impacts.forEach(function (i) { i.update(); });
+    this.gameData.trailDots.forEach(function (t) { t.update(); });
+
+    this.gameData.hounds = this.removeDead(this.gameData.hounds);
+    this.gameData.projectiles = this.removeDead(pthis.gameData.rojectiles);
+    this.gameData.impacts = this.removeDead(this.gameData.impacts);
+    this.gameData.trailDots = this.removeDead(this.gameData.trailDots);
+    this.gameData.cities = this.removeDead(this.gameData.cities);
+
+    this.checkWinCondition();
+  }
+  
+  sendToAllPlayers(message, content) {
+    for (var i = 0; i < this.players.length; i++) {
+      this.players[i].emit(message, content);
+    }
+  }
+
+  checkWinCondition() {
+    //check each team to see if there's just one remaining
+    //that's the winner
+  }
+
+  removeDead(array) {
+    return array.filter(function (element) {
+      return element.alive;
+    });
+  }
+
+  getHoundsOnTeam(team) {
+    return hounds.filter(
+      function (hound) {
+        return hound.team === team;
+      }
+    );
+  }
+}
 
 var settings = {
   gameWidth: 800,
@@ -71,80 +174,9 @@ var houndClassStats = {
 
 var complexity = 144;
 
-var seed = [13, 1, 23, 4, 5, 6,
-  13, 1, 23, 4, 5, 6,
-  13, 1, 23, 4, 5, 6,
-  13, 1, 23, 4, 5, 6];
-
 function getRandomProperty(obj) {
   var keys = Object.keys(obj)
   return obj[keys[keys.length * Math.random() << 0]];
-}
-
-/* Setup */
-
-function start() {
-  setInterval(update, timeStep);
-  playerSocket.emit('mapseed', seed);
-}
-
-function end() {
-  console.log('game end');
-  settings.paused = true;
-}
-
-/* Game functions */
-
-function update() {
-  if (settings.paused) {
-    projectiles.forEach(function (p) { p.update(); });
-    impacts.forEach(function (i) { i.update(); });
-    trailDots.forEach(function (t) { t.update(); });
-
-    projectiles = removeDead(projectiles);
-    impacts = removeDead(impacts);
-    trailDots = removeDead(trailDots);
-    cities = removeDead(cities);
-    return;
-  }
-  playerSocket.emit('console', 'update!');
-
-  TWEEN.update();
-
-  map.update();
-
-  hounds.forEach(function (h) { h.update(); });
-  cities.forEach(function (c) { c.update(); });
-  projectiles.forEach(function (p) { p.update(); });
-  impacts.forEach(function (i) { i.update(); });
-  trailDots.forEach(function (t) { t.update(); });
-
-  hounds = removeDead(hounds);
-  projectiles = removeDead(projectiles);
-  impacts = removeDead(impacts);
-  trailDots = removeDead(trailDots);
-  cities = removeDead(cities);
-
-  checkWinCondition();
-}
-
-function checkWinCondition() {
-  //check each team to see if there's just one remaining
-  //that's the winner
-}
-
-function removeDead(array) {
-  return array.filter(function (element) {
-    return element.alive;
-  });
-}
-
-function getHoundsOnTeam(team) {
-  return hounds.filter(
-    function (hound) {
-      return hound.team === team;
-    }
-  );
 }
 
 /*--------------------*/
@@ -186,3 +218,5 @@ function rollDice(sides, numberOfDice) {
 function rollDie(sides) {
   return 1 + Math.floor(Math.random() * sides);
 }
+
+module.exports = Game;

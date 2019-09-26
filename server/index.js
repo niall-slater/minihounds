@@ -2,7 +2,9 @@ var app = require('express')();
 var http = require('http').createServer(app);;
 var io = require('socket.io')(http);
 
-var playerSocket;
+var Game = require('./src/main.js');
+
+var houndGame;
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
@@ -10,10 +12,9 @@ app.get('/', function(req, res){
 
 io.on('connection', function(socket){
   var log = 'a user connected';
-  playerSocket = socket;
   console.log(log);
   socket.emit('test', 'HEWWO??');
-  start();
+  houndGame = new Game(socket);
 });
 
 http.listen(3000, function() {
