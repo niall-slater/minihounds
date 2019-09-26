@@ -94,7 +94,7 @@ class Map {
       if (Math.random() < .1 && poly.type.toLowerCase() != 'lake') {
         var size = 15 + Math.floor(Math.random() * 50);
         var city = new City(poly, size, '#eee');
-        cities.push(city);
+        gameData.cities.push(city);
         poly.city = city;
       }
     });

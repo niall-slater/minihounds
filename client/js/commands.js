@@ -57,6 +57,12 @@ function parseCommand(command) {
   }
 }
 
+function getPlayerHounds() {
+  return gameData.hounds.find(
+    (hound) => { return hound.team === playerTeam }
+  );
+}
+
 function getNamedPlayerHound(name) {
   return getPlayerHounds().find(
     (hound) => { return hound.name === name }

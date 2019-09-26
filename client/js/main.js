@@ -1,10 +1,16 @@
-var playerTeam = 1;
+var playerDetails = {
+  name: 'nige',
+  team: 1,
+};
 
 var ioClient = io.connect("http://localhost:3000");
 
+var complexity = 144;
+
 ioClient.on("test", (msg) => addMessage(msg));
 ioClient.on("console", (msg) => console.log(msg));
-ioClient.on("mapseed", (seed) => createMap(144, seed));
+ioClient.on("mapseed", (seed) => createMap(complexity, seed));
+ioClient.on("playerdetails", (details) => {playerDetails = details});
 
 var timeStep = 10;
 

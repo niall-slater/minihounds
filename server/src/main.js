@@ -39,8 +39,12 @@ class Game {
 
     for (var i = 0; i < sockets.length; i++) {
       var player = sockets[i];
-      player.name = 'player ' + i + 1;
+      player.details = {};
+      player.details.name = 'player ' + (i + 1);
+      player.details.team = (i + 1);
+      console.log(player.details);
       this.players.push(player); 
+      player.emit('playerdetails', player.details);
     }
     this.start();
   }
@@ -92,6 +96,13 @@ class Game {
     this.checkWinCondition();
   }
   
+  sendToPlayer(player, message, content) {
+    var target = this.players.find(function (p) {
+      return p.id == player;
+    });
+    target.emit(message, content);
+  }
+
   sendToAllPlayers(message, content) {
     for (var i = 0; i < this.players.length; i++) {
       this.players[i].emit(message, content);

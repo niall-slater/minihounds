@@ -52,8 +52,8 @@ class Hound {
   think() {
     var me = this;
     
-    var playerHoundsInRange = hounds.filter(function (hound) {
-      return hound.team == playerTeam;
+    var playerHoundsInRange = gameData.hounds.filter(function (hound) {
+      return hound.team == playerDetails.team;
     }).filter(function (playerHound) {
       return distanceBetween(playerHound.pos, me.pos) < me.stats.sightRange;
     });
@@ -206,7 +206,7 @@ class Hound {
 
   inSightRange() {
     var playerHounds = gameData.hounds.filter(function (hound) {
-      return hound.team == playerTeam;
+      return hound.team == playerDetails.team;
     });
 
     for (var i = 0; i < playerHounds.length; i++) {
@@ -295,7 +295,7 @@ class Hound {
 
   attack(target) {
     if (this.cooldowns.attack > 0) {
-      if (this.team === playerTeam)
+      if (this.team === playerDetails.team)
         addMessage(this.name + " cannot fire - reloading");
       return; 
     }
@@ -306,7 +306,7 @@ class Hound {
   }
   attackPoint(target) {
     if (this.cooldowns.attack > 0) {
-      if (this.team === playerTeam)
+      if (this.team === playerDetails.team)
         addMessage(this.name + " cannot fire - reloading");
       return; 
     }

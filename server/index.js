@@ -21,7 +21,7 @@ io.on('connection', function(socket){
   console.log(socket.id, 'connected');
   connections.push(socket);
   socket.emit('test', 'HEWWO??');
-  if (connections.length == 1) {
+  if (connections.length == 2) {
     gameStarted = true;
     console.log('starting game...');
     houndGame = new Game(connections);
