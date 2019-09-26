@@ -13,11 +13,20 @@ app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
-io.on('connection', function(socket){
+io.on('connection', function(socket) {
   if (gameStarted) {
     console.log(socket.id, 'rejected, game in progress');
     return;
   }
+
+  socket.on('test', function (message) {
+    console.log('message from ' + socket.id);
+    console.log(message);
+  });
+  socket.on('disconnect', function() {
+    console.log('user disconnected');
+  });
+  
   console.log(socket.id, 'connected');
   connections.push(socket);
   socket.emit('test', 'HEWWO??');
@@ -31,4 +40,3 @@ io.on('connection', function(socket){
 http.listen(3000, function() {
   console.log('listening on *:3000');
 });
-

@@ -1,60 +1,6 @@
 function parseCommand(command) {
-  command = command.toLowerCase();
-  var components = command.split(' ');
-  var name = components[0];
-  components.shift();
-  var verb = components[0];
-  components.shift();
-  var args = components;
-
-  switch (verb) {
-    case 'move': {
-      if (args.length != 2) {
-        addMessage('invalid command');
-        return;
-      }
-      var coords = parseCoords(args[0], args[1]);
-      var subject = getNamedPlayerHound(name);
-      var moveCommand =
-      {
-        x: coords[0],
-        y: coords[1]
-      };
-      subject.moveTo(moveCommand);
-      break;
-    }
-    case 'stop': {
-      var subject = getNamedPlayerHound(name);
-      subject.stopMoving();
-      break;
-    }
-    case 'attack': {
-      var subject = getNamedPlayerHound(name);
-      if (args.length < 1) {
-        addMessage('invalid command');
-        return;
-      }
-      if (args.length == 1) {
-        var target = getNamedHound(args[0]);
-        if (!target || !target.inSightRange()) {
-          addMessage('Cannot acquire target "' + args[0] + '"');
-          return;
-        }
-        subject.attack(target);
-        break;
-      } else if (args.length == 2) {
-        var coords = parseCoords(args[0], args[1]);
-        var attackCommand =
-        {
-          x: coords[0],
-          y: coords[1]
-        };
-        subject.attackPoint(attackCommand);
-        break;
-      }
-    }
-    default: break;
-  }
+  console.log('sending command');
+  ioClient.emit('command', command);
 }
 
 function getPlayerHounds() {
