@@ -124,26 +124,26 @@ var graphics = {
     }
 
     //Render cities
-    cities.forEach(function (c) { c.render() });
+    gameData.cities.forEach(function (c) { c.render() });
 
     //Render hounds
-    hounds.forEach(function (h) { h.render() });
+    gameData.hounds.forEach(function (h) { h.render() });
 
     //Render traildots
-    trailDots.forEach(function (t) { t.render() });
+    gameData.trailDots.forEach(function (t) { t.render() });
 
     //Render projectiles
-    projectiles.forEach(function (p) { p.render() });
+    gameData.projectiles.forEach(function (p) { p.render() });
 
     //Render impacts
-    impacts.forEach(function (i) { i.render() });
+    gameData.impacts.forEach(function (i) { i.render() });
 
     //Render vision 
-    hounds.forEach(function (h) {
+    gameData.hounds.forEach(function (h) {
       if (this.team === playerTeam)
         h.renderSightRange();
     });
-    cities.forEach(function (c) { c.renderSightRange() });
+    gameData.cities.forEach(function (c) { c.renderSightRange() });
   },
 
   drawDot: function (x, y, size, color, label, labelColor) {

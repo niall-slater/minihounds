@@ -55,6 +55,7 @@ class Map {
     this.width = settings.mapHeight;
 
     var voronoiPoints = [];
+    var voronoiDensity = this.seed.length / 2;;
 
     for (var i = 0; i < voronoiDensity; i++) {
       var x = randomWithSeed(this.seed[i]) * this.width;
@@ -77,7 +78,7 @@ class Map {
 
     //assign region properties
     this.mapData.polygons.forEach(function (poly) {
-      var type = getFromArrayWithSeed(terrainTypes, seed[0]);
+      var type = getFromArrayWithSeed(terrainTypes, givenSeed[0]);
       var type = getRandom(terrainTypes);
 
       poly.stroke = '#000';
@@ -94,7 +95,7 @@ class Map {
       if (Math.random() < .1 && poly.type.toLowerCase() != 'lake') {
         var size = 15 + Math.floor(Math.random() * 50);
         var city = new City(poly, size, '#eee');
-        cities.push(city);
+        gameData.cities.push(city);
         poly.city = city;
       }
     });

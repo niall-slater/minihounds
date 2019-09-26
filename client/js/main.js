@@ -1,3 +1,5 @@
+var playerTeam = 1;
+
 var ioClient = io.connect("http://localhost:3000");
 
 ioClient.on("test", (msg) => addMessage(msg));
@@ -29,29 +31,93 @@ var output = {
   alert: undefined
 };
 
+var gameData = {
+  mapSeed: [],
+  hounds: [],
+  projectiles: [],
+  impacts: [],
+  trailDots: [],
+  cities: []
+}
+
+// Class definitions
+var houndClassStats = {
+  scout: {
+    level: 1,
+    hp: 12,
+    ac: 8,
+    speed: 6,
+    sightRange: 600,
+    projectileSpeed: 14,
+    projectileRadius: 20,
+    projectileDamage: 1,
+    homingProjectiles: false,
+    attackCooldown: 3000
+  },
+  soldier: {
+    level: 1,
+    hp: 18,
+    ac: 10,
+    speed: 3,
+    sightRange: 250,
+    projectileSpeed: 2,
+    projectileRadius: 45,
+    projectileDamage: 2,
+    homingProjectiles: false,
+    attackCooldown: 3000
+  },
+  artillery: {
+    level: 1,
+    hp: 12,
+    ac: 8,
+    speed: 1,
+    sightRange: 100,
+    projectileSpeed: 7,
+    projectileRadius: 100,
+    projectileDamage: 5,
+    homingProjectiles: false,
+    attackCooldown: 5000
+  },
+  weakling: {
+    level: 1,
+    hp: 6,
+    ac: 6,
+    speed: 1,
+    sightRange: 100,
+    projectileSpeed: 1,
+    projectileRadius: 40,
+    projectileDamage: 1,
+    homingProjectiles: false,
+    attackCooldown: 10000
+  }
+}
+
 function createMap(complexity, seed) {
 
-  hounds.length = 0;
-  projectiles.length = 0;
-  impacts.length = 0;
-  trailDots.length = 0;
+  gameData.hounds.length = 0;
+  gameData.projectiles.length = 0;
+  gameData.impacts.length = 0;
+  gameData.trailDots.length = 0;
 
   for (var i = 0; i < complexity; i++) {
     seed[i] = Math.random() * 2000;
   }
 
-  var voronoiDensity = seed.length / 2;
-
   map = new Map(seed);
 
-  hounds.push(new Hound(
-    1, 'scout', { x: settings.gameWidth / 2, y: settings.gameHeight / 2 },
+  gameData.hounds.push(new Hound(
+    1, 'scout', 
+    { x: settings.gameWidth / 2, y: settings.gameHeight / 2 },
     0, houndClassStats.scout));
-  hounds.push(new Hound(
-    2, 'soldier', { x: settings.gameWidth / 2 - 50, y: settings.gameHeight / 2 - 50 },
+  
+  gameData.hounds.push(new Hound(
+    2, 'soldier', 
+    { x: settings.gameWidth / 2 - 50, y: settings.gameHeight / 2 - 50 },
     0, houndClassStats.soldier));
-  hounds.push(new Hound(
-    3, 'artillery', { x: settings.gameWidth / 2 + 50, y: settings.gameHeight / 2 - 50 },
+  
+  gameData.hounds.push(new Hound(
+    3, 'artillery', 
+    { x: settings.gameWidth / 2 + 50, y: settings.gameHeight / 2 - 50 },
     0, houndClassStats.artillery));
 }
 

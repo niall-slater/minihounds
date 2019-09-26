@@ -30,7 +30,8 @@ class Hound {
     this.fill = colors_primary[team];
     this.team = team;
     
-    this.ai = team != playerTeam;
+    //this.ai = team != playerTeam;
+    this.ai = false;
     var me = this;
     if (this.ai)
       this.startAi();
@@ -204,7 +205,7 @@ class Hound {
   }
 
   inSightRange() {
-    var playerHounds = hounds.filter(function (hound) {
+    var playerHounds = gameData.hounds.filter(function (hound) {
       return hound.team == playerTeam;
     });
 
@@ -214,9 +215,9 @@ class Hound {
         return true;
     }
 
-    for (var i = 0; i < cities.length; i++) {
-      if (distanceBetween(cities[i].pos, this.pos) <
-          cities[i].stats.sightRange)
+    for (var i = 0; i < gameData.cities.length; i++) {
+      if (distanceBetween(gameData.cities[i].pos, this.pos) <
+          gameData.cities[i].stats.sightRange)
         return true;
     }
 
@@ -299,7 +300,7 @@ class Hound {
       return; 
     }
     this.cooldowns.attack = this.stats.attackCooldown;
-    projectiles.push(new Projectile(this, target, true));
+    gameData.projectiles.push(new Projectile(this, target, true));
     var coords = parsePixels(this.pos.x, this.pos.y);
     addMessage('WEAPON DISCHARGE DETECTED AT ' + Math.round(coords[0]) + ', ' + Math.round(coords[1]));
   }
@@ -310,7 +311,7 @@ class Hound {
       return; 
     }
     this.cooldowns.attack = this.stats.attackCooldown;
-    projectiles.push(new Projectile(this, target, false));
+    gameData.projectiles.push(new Projectile(this, target, false));
     addMessage(this.name + ' WEAPON DISCHARGE');
   }
 }

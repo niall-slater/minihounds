@@ -1,3 +1,5 @@
+var TWEEN = require('@tweenjs/tween.js');
+
 class GameState {
   constructor(data) {
     this.data = data;
@@ -58,10 +60,10 @@ class Game {
       this.gameData.impacts.forEach(function (i) { i.update(); });
       this.gameData.trailDots.forEach(function (t) { t.update(); });
 
-      this.gameData.projectiles = removeDead(this.gameData.projectiles);
-      this.gameData.impacts = removeDead(this.gameData.impacts);
-      this.gameData.trailDots = removeDead(this.gameData.trailDots);
-      this.gameData.cities = removeDead(this.gameData.cities);
+      this.gameData.projectiles = this.removeDead(this.gameData.projectiles);
+      this.gameData.impacts = this.removeDead(this.gameData.impacts);
+      this.gameData.trailDots = this.removeDead(this.gameData.trailDots);
+      this.gameData.cities = this.removeDead(this.gameData.cities);
       return;
     }
     
@@ -69,16 +71,16 @@ class Game {
 
     TWEEN.update();
 
-    this.map.update();
+    //this.map.update();
 
-    this.gameData.this.gameData.hounds.forEach(function (h) { h.update(); });
+    this.gameData.hounds.forEach(function (h) { h.update(); });
     this.gameData.cities.forEach(function (c) { c.update(); });
     this.gameData.projectiles.forEach(function (p) { p.update(); });
     this.gameData.impacts.forEach(function (i) { i.update(); });
     this.gameData.trailDots.forEach(function (t) { t.update(); });
 
     this.gameData.hounds = this.removeDead(this.gameData.hounds);
-    this.gameData.projectiles = this.removeDead(pthis.gameData.rojectiles);
+    this.gameData.projectiles = this.removeDead(this.gameData.projectiles);
     this.gameData.impacts = this.removeDead(this.gameData.impacts);
     this.gameData.trailDots = this.removeDead(this.gameData.trailDots);
     this.gameData.cities = this.removeDead(this.gameData.cities);
@@ -104,7 +106,7 @@ class Game {
   }
 
   getHoundsOnTeam(team) {
-    return hounds.filter(
+    return this.gameData.hounds.filter(
       function (hound) {
         return hound.team === team;
       }
