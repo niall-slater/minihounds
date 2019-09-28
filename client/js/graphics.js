@@ -193,11 +193,11 @@ var graphics = {
     if (stroke)
       this.ctx.strokeStyle = stroke;
     else
-      this.ctx.strokeStyle = getRandomColor();
+      this.ctx.strokeStyle = '#ff0';
     if (fill)
       this.ctx.fillStyle = fill;
     else
-      this.ctx.fillStyle = getRandomColor();
+      this.ctx.fillStyle = '#ff0';
     this.ctx.beginPath();
 
     this.ctx.moveTo(points[0][0], points[0][1]);

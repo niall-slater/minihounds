@@ -86,7 +86,6 @@ class Map {
     var me = this;
     me.cities = [];
     
-    console.log('array', this.mapData.polygons);
     //assign region properties
     for (var i = 0; i < this.mapData.polygons.length; i++) {
       var poly = this.mapData.polygons[i];

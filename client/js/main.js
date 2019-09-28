@@ -10,8 +10,9 @@ var complexity = 144;
 ioClient.on("test", (msg) => addMessage(msg));
 ioClient.on("console", (msg) => console.log(msg));
 ioClient.on("mapseed", (seed) => createMap(complexity, seed));
-ioClient.on("playerdetails", (details) => {playerDetails = details});
-ioClient.on("update", (packet) => {console.log(packet)});
+ioClient.on("playerdetails", (details) => {playerDetails = details; addMessage("YOU ARE TEAM " + playerDetails.team)});
+ioClient.on("spawnhounds", (hounds) => spawnHounds(hounds));
+ioClient.on("update", (packet) => networkUpdate(packet));
 
 var timeStep = 10;
 
@@ -140,6 +141,16 @@ function start() {
   addMessage('Hounds awaiting commands.', null, 2500);
 }
 
+function spawnHounds(houndsSentFromServer) {
+  for (var i = 0; i < houndsSentFromServer.length; i++) {
+    var houndSent = houndsSentFromServer[i];
+    gameData.hounds.push(new Hound(houndSent.id, houndSent.name,
+                                  houndSent.pos, houndSent.team,
+                                  houndSent.stats));
+
+  }    
+}
+
 function win() {
   addMessage('WIN?');
 }
@@ -152,6 +163,18 @@ function lose() {
 
 function networkUpdate(serverState) {
   gameState = serverState;
+  
+  for (var i = 0; i < serverState.cities.length; i++) {
+    gameData.cities[i].stats = serverState.cities[i].stats;
+    gameData.cities[i].alive = serverState.cities[i].alive;
+  }
+  
+  for (var i = 0; i < serverState.hounds.length; i++) {
+    gameData.hounds[i].pos = serverState.hounds[i].pos;
+    gameData.hounds[i].alive = serverState.hounds[i].alive;
+    gameData.hounds[i].cooldowns = serverState.hounds[i].cooldowns;
+    gameData.hounds[i].poly = serverState.hounds[i].poly;
+  }
 }
 
 function localUpdate() {
@@ -198,7 +221,7 @@ function sendCommand() {
   input.lastCommand = command;
   input.console.value = '';
   addMessage(command);
-  parseCommand(command);
+  parseCommand(command, ioClient);
 }
 
 /*--------------------*/

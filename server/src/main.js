@@ -1,9 +1,11 @@
 var TWEEN = require('@tweenjs/tween.js');
 var Hound = require('./hound.js');
 var Map = require('./map.js');
+var CommandController = require('./commands.js');
+var gameInstance;
 
 function generateSeed() {
-  var length = 20;
+  var length = 40;
   var result = [];
   for (var i = 0; i < length; i++) {
     result.push(Math.floor(Math.random()*25));
@@ -22,7 +24,7 @@ class Game {
   constructor(sockets) {
     var seed = generateSeed();
     
-    this.timeStep = 1000;
+    this.timeStep = 10;
     this.gameData = {
       mapSeed: seed,
       hounds: [],
@@ -45,39 +47,52 @@ class Game {
     this.houndClassStats = houndClassStats;
     
     this.players = [];
+    
+    this.commandController = new CommandController(this);
+    var cc = this.commandController;
 
     for (var i = 0; i < sockets.length; i++) {
       var player = sockets[i];
       player.details = {};
-      player.details.name = 'player ' + (i + 1);
-      player.details.team = (i + 1);
+      player.details.name = 'player ' + i;
+      player.details.team = i;
       console.log(player.details);
       this.players.push(player); 
       player.emit('playerdetails', player.details);
+
+      player.on('command', (msg) => {
+        cc.parseCommand(msg)
+      });
     }
     
     this.map = new Map(seed, this.settings);
     this.gameData.cities = this.map.cities;
     
+    var h1 = new Hound(
+      0, 'scout0', 
+      { x: this.settings.gameWidth / 2,
+        y: this.settings.gameHeight / 2 },
+      0, houndClassStats.scout,
+      this.map, this.gameData.timeStep);
+    
+    var h2 = new Hound(
+      1, 'scout1', 
+      { x: this.settings.gameWidth / 2 + 150,
+        y: this.settings.gameHeight / 2 + 150 },
+      1, houndClassStats.scout,
+      this.map, this.gameData.timeStep);
+    
+    this.gameData.hounds.push(h1);
+    this.gameData.hounds.push(h2);
+    
     this.start();
   }
-  
 
   start() {
     setInterval(this.update.bind(this), this.timeStep);
     this.sendToAllPlayers('mapseed', this.gameData.mapSeed);
-    
-    this.gameData.hounds.push(new Hound(
-      1, 'scout1', 
-      { x: this.settings.gameWidth / 2,
-        y: this.settings.gameHeight / 2 },
-      1, houndClassStats.scout, this.map));
-    
-    this.gameData.hounds.push(new Hound(
-      1, 'scout2', 
-      { x: this.settings.gameWidth / 2 + 50,
-        y: this.settings.gameHeight / 2 },
-      2, houndClassStats.scout, this.map));
+
+    this.sendToAllPlayers("spawnhounds", this.gameData.hounds);
   }
 
   end() {
@@ -117,8 +132,7 @@ class Game {
     this.gameData.cities = this.removeDead(this.gameData.cities);
 
     this.checkWinCondition();
-    
-    this.sendToAllPlayers('console', 'update!');
+
     this.sendToAllPlayers('update', this.gameData);
   }
   
@@ -135,6 +149,24 @@ class Game {
     }
   }
 
+  getTeamHounds(team) {
+    return this.gameData.hounds.filter(
+      (hound) => { return hound.team === team }
+    );
+  }
+  
+  getNamedTeamHound(name, team) {
+    return this.getTeamHounds(team).find(
+      (hound) => { return hound.name === name }
+    );
+  }
+
+  getNamedHound(name) {
+    return this.gameData.hounds.find(
+      (hound) => { return hound.name === name }
+    );
+  }
+
   checkWinCondition() {
     //check each team to see if there's just one remaining
     //that's the winner
@@ -144,14 +176,6 @@ class Game {
     return array.filter(function (element) {
       return element.alive;
     });
-  }
-
-  getHoundsOnTeam(team) {
-    return this.gameData.hounds.filter(
-      function (hound) {
-        return hound.team === team;
-      }
-    );
   }
 }
 
@@ -264,3 +288,7 @@ function rollDie(sides) {
 }
 
 module.exports.GameClass = Game;
+module.exports.CreateFunction = function(sockets) {
+  gameInstance = new Game(sockets);
+  module.exports.GameInstance = gameInstance;
+}

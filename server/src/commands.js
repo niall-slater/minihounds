@@ -1,77 +1,75 @@
-function parseCommand(command) {
-  command = command.toLowerCase();
-  var components = command.split(' ');
-  var name = components[0];
-  components.shift();
-  var verb = components[0];
-  components.shift();
-  var args = components;
+class CommandController {
+  constructor(game) {
+    this.game = game;
+  }
+  
+  parseCommand(command, player) {
+    console.log(command, player.id);
+    command = command.toLowerCase();
+    var components = command.split(' ');
+    var name = components[0];
+    components.shift();
+    var verb = components[0];
+    components.shift();
+    var args = components;
 
-  switch (verb) {
-    case 'move': {
-      if (args.length != 2) {
-        addMessage('invalid command');
-        return;
-      }
-      var coords = parseCoords(args[0], args[1]);
-      var subject = getNamedPlayerHound(name);
-      var moveCommand =
-      {
-        x: coords[0],
-        y: coords[1]
-      };
-      subject.moveTo(moveCommand);
-      break;
-    }
-    case 'stop': {
-      var subject = getNamedPlayerHound(name);
-      subject.stopMoving();
-      break;
-    }
-    case 'attack': {
-      var subject = getNamedPlayerHound(name);
-      if (args.length < 1) {
-        addMessage('invalid command');
-        return;
-      }
-      if (args.length == 1) {
-        var target = getNamedHound(args[0]);
-        if (!target || !target.inSightRange()) {
-          addMessage('Cannot acquire target "' + args[0] + '"');
+    switch (verb) {
+      case 'move': {
+        if (args.length != 2) {
+          addMessage('invalid command');
+          console.log('invalid command');
           return;
         }
-        subject.attack(target);
-        break;
-      } else if (args.length == 2) {
         var coords = parseCoords(args[0], args[1]);
-        var attackCommand =
+        var subject = this.game.getNamedTeamHound(name, player.details.team);
+        if (!subject)
+          console.log('No subject found ' + name, player.details);
+        var moveCommand =
         {
           x: coords[0],
           y: coords[1]
         };
-        subject.attackPoint(attackCommand);
+        subject.moveTo(moveCommand);
+        console.log('moving ' + subject.name, moveCommand);
         break;
       }
+      case 'stop': {
+        var subject = this.game.getNamedTeamHound(name, player.details.team);
+        if (!subject)
+          console.log('No subject found ' + name, player.details);
+        subject.stopMoving();
+        break;
+      }
+      case 'attack': {
+        var subject = this.game.getNamedTeamHound(name, player.details.team);
+        if (!subject)
+          console.log('No subject found ' + name, player.details);
+        if (args.length < 1) {
+          addMessage('invalid command');
+          return;
+        }
+        if (args.length == 1) {
+          var target = this.game.getNamedHound(args[0]);
+          if (!target || !target.inSightRange()) {
+            addMessage('Cannot acquire target "' + args[0] + '"');
+            return;
+          }
+          subject.attack(target);
+          break;
+        } else if (args.length == 2) {
+          var coords = parseCoords(args[0], args[1]);
+          var attackCommand =
+          {
+            x: coords[0],
+            y: coords[1]
+          };
+          subject.attackPoint(attackCommand);
+          break;
+        }
+      }
+      default: break;
     }
-    default: break;
   }
-}
-
-function getNamedPlayerHound(name) {
-  return getPlayerHounds().find(
-    (hound) => { return hound.name === name }
-  );
-}
-
-function getNamedHound(name) {
-  return hounds.find(
-    (hound) => { return hound.name === name }
-  );
-}
-
-function recallLastCommand() {
-  if (input.lastCommand)
-    input.console.value = input.lastCommand;
 }
 
 /* GENERIC HELPER FUNCTIONS */
@@ -157,3 +155,5 @@ function rotateVector(vec, ang)
     var sin = Math.sin(ang);
     return new Array(Math.round(10000*(vec[0] * cos - vec[1] * sin))/10000, Math.round(10000*(vec[0] * sin + vec[1] * cos))/10000);
 };
+
+module.exports = CommandController;

@@ -3,8 +3,7 @@ var http = require('http').createServer(app);;
 var io = require('socket.io')(http);
 
 var Game = require('./src/main.js').GameClass;
-
-var houndGame;
+var CreateFunction = require('./src/main.js').CreateFunction;
 
 var connections = [];
 var gameStarted = false;
@@ -33,12 +32,10 @@ io.on('connection', function(socket) {
   if (connections.length == 2) {
     gameStarted = true;
     console.log('starting game...');
-    houndGame = new Game(connections);
+    CreateFunction(connections);
   }
 });
 
 http.listen(3000, function() {
   console.log('listening on *:3000');
 });
-
-module.exports.houndGame = houndGame;

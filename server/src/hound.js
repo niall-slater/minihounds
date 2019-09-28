@@ -3,13 +3,15 @@ var aiThinkInterval = 3000;
 var arriveAtLocationTolerance = 10;
 
 class Hound {
-  constructor(id, name, position, team, stats, map) {
+  constructor(id, name, position, team, stats, map, timeStep) {
     this.id = id;
     this.name = name;
     this.pos = position;
     this.movement = { x: 0, y: 0 };
     this.moveTarget = null;
+    
     this.map = map;
+    this.timeStep = timeStep;
 
     this.tasks = [];
 
@@ -98,7 +100,7 @@ class Hound {
 
   updateCooldowns() {
     if (this.cooldowns.attack > 0)
-      this.cooldowns.attack -= timeStep;
+      this.cooldowns.attack -= this.timeStep;
     else
       this.cooldowns.attack = 0;
   }
@@ -124,8 +126,8 @@ class Hound {
 
     var speedCostAdjustment = 1 - this.stats.speedPenalty;
 
-    this.pos.x += this.movement.x * timeStep * houndMovementMultiplier * speedCostAdjustment;
-    this.pos.y += this.movement.y * timeStep * houndMovementMultiplier * speedCostAdjustment;
+    this.pos.x += this.movement.x * this.timeStep * houndMovementMultiplier * speedCostAdjustment;
+    this.pos.y += this.movement.y * this.timeStep * houndMovementMultiplier * speedCostAdjustment;
 
     if (distanceBetween(this.moveTarget, this.pos) < 10)
       this.stopMoving()
@@ -322,4 +324,12 @@ function rollDice(sides, numberOfDice) {
 
 function rollDie(sides) {
   return 1 + Math.floor(Math.random() * sides);
+}
+
+function distanceBetween(a, b) {
+  //a and b are {x: value, y: value} objects
+  var xdiff = a.x - b.x;
+  var ydiff = a.y - b.y;
+  var distance = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
+  return distance;
 }

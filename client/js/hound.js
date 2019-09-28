@@ -27,6 +27,7 @@ class Hound {
     }
 
     this.stroke = '#fff';
+    //Teams start counting from 1, not zero
     this.fill = colors_primary[team];
     this.team = team;
     
@@ -97,7 +98,7 @@ class Hound {
 
   updateCooldowns() {
     if (this.cooldowns.attack > 0)
-      this.cooldowns.attack -= timeStep;
+      this.cooldowns.attack -= this.timeStep;
     else
       this.cooldowns.attack = 0;
   }
@@ -123,8 +124,8 @@ class Hound {
 
     var speedCostAdjustment = 1 - this.stats.speedPenalty;
 
-    this.pos.x += this.movement.x * timeStep * houndMovementMultiplier * speedCostAdjustment;
-    this.pos.y += this.movement.y * timeStep * houndMovementMultiplier * speedCostAdjustment;
+    this.pos.x += this.movement.x * this.timeStep * houndMovementMultiplier * speedCostAdjustment;
+    this.pos.y += this.movement.y * this.timeStep * houndMovementMultiplier * speedCostAdjustment;
 
     if (distanceBetween(this.moveTarget, this.pos) < 10)
       this.stopMoving()
