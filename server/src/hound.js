@@ -116,16 +116,9 @@ class Hound {
   updateMovement() {
     if (!this.moveTarget)
       return;
-
     this.currentRegion = this.map.getRegionAt(this.pos.x, this.pos.y);
 
-    if (!this.currentRegion) {
-      this.stopMoving();
-      return;
-    }
-
     var speedCostAdjustment = 1 - this.stats.speedPenalty;
-
     this.pos.x += this.movement.x * this.timeStep * houndMovementMultiplier * speedCostAdjustment;
     this.pos.y += this.movement.y * this.timeStep * houndMovementMultiplier * speedCostAdjustment;
 

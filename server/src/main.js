@@ -59,11 +59,14 @@ class Game {
       console.log(player.details);
       this.players.push(player); 
       player.emit('playerdetails', player.details);
-
-      player.on('command', (msg) => {
-        cc.parseCommand(msg)
-      });
     }
+
+    sockets[0].on('command', (msg) => {
+      cc.parseCommand(msg, sockets[0]);
+    });
+    sockets[1].on('command', (msg) => {
+      cc.parseCommand(msg, sockets[1]);
+    });
     
     this.map = new Map(seed, this.settings);
     this.gameData.cities = this.map.cities;
@@ -73,14 +76,14 @@ class Game {
       { x: this.settings.gameWidth / 2,
         y: this.settings.gameHeight / 2 },
       0, houndClassStats.scout,
-      this.map, this.gameData.timeStep);
+      this.map, this.timeStep);
     
     var h2 = new Hound(
       1, 'scout1', 
       { x: this.settings.gameWidth / 2 + 150,
         y: this.settings.gameHeight / 2 + 150 },
       1, houndClassStats.scout,
-      this.map, this.gameData.timeStep);
+      this.map, this.timeStep);
     
     this.gameData.hounds.push(h1);
     this.gameData.hounds.push(h2);

@@ -22,8 +22,10 @@ class CommandController {
         }
         var coords = parseCoords(args[0], args[1]);
         var subject = this.game.getNamedTeamHound(name, player.details.team);
-        if (!subject)
+        if (!subject) {
           console.log('No subject found ' + name, player.details);
+          return;
+        }
         var moveCommand =
         {
           x: coords[0],
@@ -35,15 +37,19 @@ class CommandController {
       }
       case 'stop': {
         var subject = this.game.getNamedTeamHound(name, player.details.team);
-        if (!subject)
+        if (!subject) {
           console.log('No subject found ' + name, player.details);
+          return;
+        }
         subject.stopMoving();
         break;
       }
       case 'attack': {
         var subject = this.game.getNamedTeamHound(name, player.details.team);
-        if (!subject)
+        if (!subject) {
           console.log('No subject found ' + name, player.details);
+          return;
+        }
         if (args.length < 1) {
           addMessage('invalid command');
           return;
