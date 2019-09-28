@@ -1,4 +1,16 @@
 var TWEEN = require('@tweenjs/tween.js');
+var Hound = require('./hound.js');
+var Map = require('./map.js');
+
+function generateSeed() {
+  var length = 20;
+  var result = [];
+  for (var i = 0; i < length; i++) {
+    result.push(Math.floor(Math.random()*25));
+  }
+  
+  return result;
+}
 
 class GameState {
   constructor(data) {
@@ -8,12 +20,9 @@ class GameState {
 
 class Game {
   constructor(sockets) {
-    var seed = [13, 1, 23, 4, 5, 6,
-                13, 1, 23, 4, 5, 6,
-                13, 1, 23, 4, 5, 6,
-                13, 1, 23, 4, 5, 6];
+    var seed = generateSeed();
     
-    this.timeStep = 10;
+    this.timeStep = 1000;
     this.gameData = {
       mapSeed: seed,
       hounds: [],
@@ -46,6 +55,10 @@ class Game {
       this.players.push(player); 
       player.emit('playerdetails', player.details);
     }
+    
+    this.map = new Map(seed, this.settings);
+    this.gameData.cities = this.map.cities;
+    
     this.start();
   }
   
@@ -53,6 +66,18 @@ class Game {
   start() {
     setInterval(this.update.bind(this), this.timeStep);
     this.sendToAllPlayers('mapseed', this.gameData.mapSeed);
+    
+    this.gameData.hounds.push(new Hound(
+      1, 'scout1', 
+      { x: this.settings.gameWidth / 2,
+        y: this.settings.gameHeight / 2 },
+      1, houndClassStats.scout, this.map));
+    
+    this.gameData.hounds.push(new Hound(
+      1, 'scout2', 
+      { x: this.settings.gameWidth / 2 + 50,
+        y: this.settings.gameHeight / 2 },
+      2, houndClassStats.scout, this.map));
   }
 
   end() {
@@ -74,12 +99,10 @@ class Game {
       this.gameData.cities = this.removeDead(this.gameData.cities);
       return;
     }
-    
-    this.sendToAllPlayers('console', 'update!');
 
     TWEEN.update();
 
-    //this.map.update();
+    this.map.update();
 
     this.gameData.hounds.forEach(function (h) { h.update(); });
     this.gameData.cities.forEach(function (c) { c.update(); });
@@ -94,6 +117,9 @@ class Game {
     this.gameData.cities = this.removeDead(this.gameData.cities);
 
     this.checkWinCondition();
+    
+    this.sendToAllPlayers('console', 'update!');
+    this.sendToAllPlayers('update', this.gameData);
   }
   
   sendToPlayer(player, message, content) {
@@ -222,6 +248,7 @@ function parseBool(str) {
   else
     return false;
 }
+
 /* DICE ROLLS */
 
 function rollDice(sides, numberOfDice) {
@@ -236,4 +263,4 @@ function rollDie(sides) {
   return 1 + Math.floor(Math.random() * sides);
 }
 
-module.exports = Game;
+module.exports.GameClass = Game;

@@ -38,3 +38,19 @@ class City {
     this.alive = false;
   }
 }
+
+module.exports = City;
+
+/* DICE ROLLS */
+
+function rollDice(sides, numberOfDice) {
+  var result = 0;
+  for (var i = 0; i < numberOfDice; i++) {
+    result += rollDie(sides);
+  }
+  return result;
+}
+
+function rollDie(sides) {
+  return 1 + Math.floor(Math.random() * sides);
+}

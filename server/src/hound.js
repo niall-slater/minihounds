@@ -3,12 +3,13 @@ var aiThinkInterval = 3000;
 var arriveAtLocationTolerance = 10;
 
 class Hound {
-  constructor(id, name, position, team, stats) {
+  constructor(id, name, position, team, stats, map) {
     this.id = id;
     this.name = name;
     this.pos = position;
     this.movement = { x: 0, y: 0 };
     this.moveTarget = null;
+    this.map = map;
 
     this.tasks = [];
 
@@ -30,7 +31,8 @@ class Hound {
     this.fill = colors_primary[team];
     this.team = team;
     
-    this.ai = team != playerTeam;
+    this.ai = false;
+    //this.ai = team != playerTeam;
     var me = this;
     if (this.ai)
       this.startAi();
@@ -72,7 +74,7 @@ class Hound {
   }
 
   moveTo(target) {
-    var targetRegion = map.getRegionAt(target.x, target.y);
+    var targetRegion = this.map.getRegionAt(target.x, target.y);
     this.moveTarget = target;
 
     var dx, dy;
@@ -113,7 +115,7 @@ class Hound {
     if (!this.moveTarget)
       return;
 
-    this.currentRegion = map.getRegionAt(this.pos.x, this.pos.y);
+    this.currentRegion = this.map.getRegionAt(this.pos.x, this.pos.y);
 
     if (!this.currentRegion) {
       this.stopMoving();
@@ -151,7 +153,7 @@ class Hound {
     if (!this.alive)
       return;
 
-    this.currentRegion = map.getRegionAt(this.pos.x, this.pos.y);
+    this.currentRegion = this.map.getRegionAt(this.pos.x, this.pos.y);
     if (this.currentRegion)
       this.stats.speedPenalty = this.currentRegion.movecost;
     else
@@ -179,7 +181,7 @@ class Hound {
     if (!amount)
       return;
     this.stats.hp -= amount;
-    var terrainCover = map.getRegionAt(this.pos.x, this.pos.y).defence;
+    var terrainCover = this.map.getRegionAt(this.pos.x, this.pos.y).defence;
     amount *= 1 - terrainCover;
     addMessage(amount + " damage to " + this.name + ". " + this.stats.hp + "HP remaining.");
     if (this.stats.hp <= 0) {
@@ -290,12 +292,34 @@ class Hound {
   }
   attackPoint(target) {
     if (this.cooldowns.attack > 0) {
-      if (this.team === playerTeam)
+      if (this.team === 1)
         addMessage(this.name + " cannot fire - reloading");
-      return; 
+      return;
     }
     this.cooldowns.attack = this.stats.attackCooldown;
     projectiles.push(new Projectile(this, target, false));
     addMessage(this.name + ' WEAPON DISCHARGE');
   }
+}
+
+module.exports = Hound;
+
+/* Helper stuff */
+
+var colors_primary = [
+  '#f00', '#00f'
+];
+
+/* DICE ROLLS */
+
+function rollDice(sides, numberOfDice) {
+  var result = 0;
+  for (var i = 0; i < numberOfDice; i++) {
+    result += rollDie(sides);
+  }
+  return result;
+}
+
+function rollDie(sides) {
+  return 1 + Math.floor(Math.random() * sides);
 }

@@ -1,7 +1,3 @@
-var colors_primary = [
-  '#f00', '#00f'
-];
-
 function rotatePoint(cx, cy, x, y, angle) {
   var radians = (Math.PI / 180) * angle,
     cos = Math.cos(radians),

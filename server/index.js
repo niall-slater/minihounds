@@ -2,7 +2,7 @@ var app = require('express')();
 var http = require('http').createServer(app);;
 var io = require('socket.io')(http);
 
-var Game = require('./src/main.js');
+var Game = require('./src/main.js').GameClass;
 
 var houndGame;
 
@@ -40,3 +40,5 @@ io.on('connection', function(socket) {
 http.listen(3000, function() {
   console.log('listening on *:3000');
 });
+
+module.exports.houndGame = houndGame;

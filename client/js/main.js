@@ -11,6 +11,7 @@ ioClient.on("test", (msg) => addMessage(msg));
 ioClient.on("console", (msg) => console.log(msg));
 ioClient.on("mapseed", (seed) => createMap(complexity, seed));
 ioClient.on("playerdetails", (details) => {playerDetails = details});
+ioClient.on("update", (packet) => {console.log(packet)});
 
 var timeStep = 10;
 
@@ -105,26 +106,7 @@ function createMap(complexity, seed) {
   gameData.impacts.length = 0;
   gameData.trailDots.length = 0;
 
-  for (var i = 0; i < complexity; i++) {
-    seed[i] = Math.random() * 2000;
-  }
-
   map = new Map(seed);
-
-  gameData.hounds.push(new Hound(
-    1, 'scout', 
-    { x: settings.gameWidth / 2, y: settings.gameHeight / 2 },
-    0, houndClassStats.scout));
-  
-  gameData.hounds.push(new Hound(
-    2, 'soldier', 
-    { x: settings.gameWidth / 2 - 50, y: settings.gameHeight / 2 - 50 },
-    0, houndClassStats.soldier));
-  
-  gameData.hounds.push(new Hound(
-    3, 'artillery', 
-    { x: settings.gameWidth / 2 + 50, y: settings.gameHeight / 2 - 50 },
-    0, houndClassStats.artillery));
 }
 
 function getRandomProperty(obj) {

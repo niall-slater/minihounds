@@ -48,18 +48,18 @@ function getRandom(array) {
 }
 
 class Map {
-  constructor(givenSeed) {
-    this.seed = givenSeed;
+  constructor(seed) {
+    this.seed = seed;
 
     this.height = settings.mapWidth;
     this.width = settings.mapHeight;
 
     var voronoiPoints = [];
-    var voronoiDensity = this.seed.length / 2;;
+    var voronoiDensity = seed.length / 2;;
 
     for (var i = 0; i < voronoiDensity; i++) {
-      var x = randomWithSeed(this.seed[i]) * this.width;
-      var y = randomWithSeed(this.seed[i + 1]) * this.height;
+      var x = randomWithSeed(seed[i]) * this.width;
+      var y = randomWithSeed(seed[i + 1]) * this.height;
       voronoiPoints.push([x, y]);
     }
 
@@ -74,31 +74,34 @@ class Map {
           return point;
       });
     });
+    regions = regions.filter(function (el) {
+      return el != null;
+    });
     this.mapData.polygons = regions;
 
     //assign region properties
-    this.mapData.polygons.forEach(function (poly) {
-      var type = getFromArrayWithSeed(terrainTypes, givenSeed[0]);
-      var type = getRandom(terrainTypes);
+    for (var i = 0; i < this.mapData.polygons.length; i++) {
+      var poly = this.mapData.polygons[i];
+      var type = getFromArrayWithSeed(terrainTypes, seed[i]);
 
       poly.stroke = '#000';
       poly.type = type.name;
       poly.fill = type.color;
       poly.movecost = type.movecost;
       poly.defence = type.defence;
-      poly.name = getRandom(city_names);
+      poly.name = getFromArrayWithSeed(city_names, seed[i]);
       poly.center = {
         x: getCenterOfPolygon(poly)[0],
         y: getCenterOfPolygon(poly)[1]
       };
 
-      if (Math.random() < .1 && poly.type.toLowerCase() != 'lake') {
-        var size = 15 + Math.floor(Math.random() * 50);
+      if (i%4 == 0 && poly.type.toLowerCase() != 'lake') {
+        var size = 15 + seed[i];
         var city = new City(poly, size, '#eee');
         gameData.cities.push(city);
         poly.city = city;
       }
-    });
+    }
     console.log('Mapdata:', this.mapData);
   }
 

@@ -1,3 +1,7 @@
+var d3 = require('../node_modules/d3-voronoi/dist/d3-voronoi.min.js');
+
+var City = require('./city.js');
+
 //Import voronoi
 var voronoi = d3.voronoi();
 
@@ -48,17 +52,18 @@ function getRandom(array) {
 }
 
 class Map {
-  constructor(givenSeed) {
-    this.seed = givenSeed;
+  constructor(seed, settings) {
+    this.seed = seed;
 
     this.height = settings.mapWidth;
     this.width = settings.mapHeight;
 
     var voronoiPoints = [];
+    var voronoiDensity = seed.length/2;
 
     for (var i = 0; i < voronoiDensity; i++) {
-      var x = randomWithSeed(this.seed[i]) * this.width;
-      var y = randomWithSeed(this.seed[i + 1]) * this.height;
+      var x = randomWithSeed(seed[i]) * this.width;
+      var y = randomWithSeed(seed[i + 1]) * this.height;
       voronoiPoints.push([x, y]);
     }
 
@@ -73,32 +78,39 @@ class Map {
           return point;
       });
     });
+    regions = regions.filter(function (el) {
+      return el != null;
+    });
     this.mapData.polygons = regions;
 
+    var me = this;
+    me.cities = [];
+    
+    console.log('array', this.mapData.polygons);
     //assign region properties
-    this.mapData.polygons.forEach(function (poly) {
-      var type = getFromArrayWithSeed(terrainTypes, seed[0]);
-      var type = getRandom(terrainTypes);
+    for (var i = 0; i < this.mapData.polygons.length; i++) {
+      var poly = this.mapData.polygons[i];
+      var type = getFromArrayWithSeed(terrainTypes, seed[i]);
 
       poly.stroke = '#000';
       poly.type = type.name;
       poly.fill = type.color;
       poly.movecost = type.movecost;
       poly.defence = type.defence;
-      poly.name = getRandom(city_names);
+      poly.name = getFromArrayWithSeed(city_names, seed[i]);
       poly.center = {
         x: getCenterOfPolygon(poly)[0],
         y: getCenterOfPolygon(poly)[1]
       };
 
-      if (Math.random() < .1 && poly.type.toLowerCase() != 'lake') {
-        var size = 15 + Math.floor(Math.random() * 50);
+      if (i%4 == 0 && poly.type.toLowerCase() != 'lake') {
+        var size = 15 + seed[i];
         var city = new City(poly, size, '#eee');
-        gameData.cities.push(city);
+        me.cities.push(city);
         poly.city = city;
       }
-    });
-    console.log('Mapdata:', this.mapData);
+    }
+    //console.log('Mapdata:', this.mapData);
   }
 
   update() {
@@ -185,3 +197,32 @@ function getCenterOfPolygon(points) {
 
   return region.centroid();
 }
+
+function isInside(point, polygon) {
+  // ray-casting algorithm based on
+  // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+
+  var x = point[0], y = point[1];
+
+  var inside = false;
+  for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    var xi = polygon[i][0], yi = polygon[i][1];
+    var xj = polygon[j][0], yj = polygon[j][1];
+
+    var intersect = ((yi > y) != (yj > y))
+      && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+    if (intersect) inside = !inside;
+  }
+
+  return inside;
+};
+
+function rotateVector(vec, ang)
+{
+    ang = ang * (Math.PI/180);
+    var cos = Math.cos(ang);
+    var sin = Math.sin(ang);
+    return new Array(Math.round(10000*(vec[0] * cos - vec[1] * sin))/10000, Math.round(10000*(vec[0] * sin + vec[1] * cos))/10000);
+};
+
+module.exports = Map;
