@@ -195,6 +195,12 @@ function networkUpdate(serverState) {
     gameData.impacts[i].alpha = serverState.impacts[i].alpha;
     gameData.impacts[i].alive = serverState.impacts[i].alive;
   }
+
+  gameData.hounds = removeDead(gameData.hounds);
+  gameData.projectiles = removeDead(gameData.projectiles);
+  gameData.impacts = removeDead(gameData.impacts);
+  gameData.trailDots = removeDead(gameData.trailDots);
+  gameData.cities = removeDead(gameData.cities);
 }
 
 function localUpdate() {
@@ -203,6 +209,9 @@ function localUpdate() {
   update performed when a packet
   is received from the server */
   
+  gameData.trailDots.forEach(function(t){t.update()});
+  gameData.trailDots = removeDead(gameData.trailDots);
+
   //render updated graphics
   graphics.render();
 }
@@ -318,4 +327,10 @@ function rollDice(sides, numberOfDice) {
 
 function rollDie(sides) {
   return 1 + Math.floor(Math.random() * sides);
+}
+
+function removeDead(array) {
+  return array.filter(function (element) {
+    return element.alive;
+  });
 }

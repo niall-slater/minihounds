@@ -8,7 +8,9 @@ class TrailDot {
     this.alpha = 1;
   }
 
-  update() {
+  update(timeStep) {
+    console.log('time trails', timeStep);
+    console.log('alpha', this.alpha);
     if (!this.alive)
       return;
     var trailLifetime = 10000;

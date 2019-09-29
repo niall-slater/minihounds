@@ -53,15 +53,6 @@ class Projectile {
       .start();
   }
 
-  updateBounds() {
-
-  }
-
-  update() {
-    if (!this.alive)
-      return;
-  }
-
   onInspect() {
     addMessage(this.name + ": lvl" + this.stats.level, colors.text);
   }
@@ -111,51 +102,6 @@ class Impact {
     this.stroke = '#000';
     this.fill = '#ffaa00';//'#9a9a9a'; for grey
     this.alpha = 1;
-
-    this.damageHoundsInside();
-    this.damageCitiesInside();
-  }
-
-  damageHoundsInside() {
-    var impact = this;
-    gameData.hounds.forEach(function (hound) {
-      if (distanceBetween(hound.pos, impact.pos) < impact.radius)
-        hound.hurt(rollDice(6, impact.damage));
-    });
-  }
-
-  damageCitiesInside() {
-    var impact = this;
-    gameData.cities.forEach(function (city) {
-      if (distanceBetween(city.pos, impact.pos) < impact.radius)
-        city.hurt(rollDice(6, impact.damage));
-    });
-  }
-
-  update() {
-    if (!this.alive)
-      return;
-
-    var explosionFadeTime = 1400;
-
-    if (this.alpha > 0)
-      this.alpha -= timeStep / explosionFadeTime;
-    else
-      this.alpha = 0;
-
-    this.updateBounds();
-  }
-
-  updateBounds() {
-    if (!this.alive)
-      return;
-
-    var impactShrinkTime = 100;
-
-    if (this.radius > 0)
-      this.radius -= timeStep / impactShrinkTime;
-    else
-      this.die();
   }
 
   render() {

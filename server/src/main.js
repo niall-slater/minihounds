@@ -122,37 +122,23 @@ class Game {
   /* Game functions */
 
   update() {
-    if (this.settings.paused) {
-      this.gameData.projectiles.forEach(function (p) { p.update(); });
-      this.gameData.impacts.forEach(function (i) { i.update(this.timeStep); });
-      this.gameData.trailDots.forEach(function (t) { t.update(); });
-
-      this.gameData.projectiles = this.removeDead(this.gameData.projectiles);
-      this.gameData.impacts = this.removeDead(this.gameData.impacts);
-      this.gameData.trailDots = this.removeDead(this.gameData.trailDots);
-      this.gameData.cities = this.removeDead(this.gameData.cities);
-      return;
-    }
-
+    var timeStep = this.timeStep;
     TWEEN.update();
 
     this.map.update();
-
     this.gameData.hounds.forEach(function (h) { h.update(); });
     this.gameData.cities.forEach(function (c) { c.update(); });
     this.gameData.projectiles.forEach(function (p) { p.update(); });
-    this.gameData.impacts.forEach(function (i) { i.update(); });
-    this.gameData.trailDots.forEach(function (t) { t.update(); });
-
-    this.gameData.hounds = this.removeDead(this.gameData.hounds);
-    this.gameData.projectiles = this.removeDead(this.gameData.projectiles);
-    this.gameData.impacts = this.removeDead(this.gameData.impacts);
-    this.gameData.trailDots = this.removeDead(this.gameData.trailDots);
-    this.gameData.cities = this.removeDead(this.gameData.cities);
+    this.gameData.impacts.forEach(function (i) { i.update(timeStep); });
 
     this.checkWinCondition();
 
     this.sendToAllPlayers('update', this.gameData);
+
+    this.gameData.hounds = this.removeDead(this.gameData.hounds);
+    this.gameData.projectiles = this.removeDead(this.gameData.projectiles);
+    this.gameData.impacts = this.removeDead(this.gameData.impacts);
+    this.gameData.cities = this.removeDead(this.gameData.cities);
   }
   
   sendToPlayer(player, message, content) {

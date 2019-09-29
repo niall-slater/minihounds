@@ -36,6 +36,7 @@ class Projectile {
       me.spawnTrailDot()
     }, dotSpawnInterval);
     */
+    this.die.bind(this);
   }
 
   moveTo(moveTarget) {

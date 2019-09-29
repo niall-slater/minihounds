@@ -26,7 +26,7 @@ class City {
     if (!amount)
       return;
     this.stats.hp -= amount;
-    addMessage(amount + " damage to " + this.name + ". " + this.stats.hp + "HP remaining.");
+    //addMessage(amount + " damage to " + this.name + ". " + this.stats.hp + "HP remaining.");
     if (this.stats.hp <= 0) {
       this.stats.hp = 0;
       this.die();
@@ -34,7 +34,7 @@ class City {
   }
 
   die() {
-    addMessage(this.name + " destroyed!")
+    //addMessage(this.name + " destroyed!")
     this.alive = false;
   }
 }
