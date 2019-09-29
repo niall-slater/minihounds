@@ -1,34 +1,41 @@
+const Impact = require('./impact.js');
+const TrailDot = require('./trailDot.js');
+const TWEEN = require('@tweenjs/tween.js');
+
 class Projectile {
-  constructor(creator, target, targetingHound) {
-    this.pos = { x: creator.pos.x, y: creator.pos.y };
-    this.creator = creator;
+  constructor(stats, pos, target, targetingHound, createImpact) {
+    this.pos = { x: pos.x, y: pos.y };
     this.target = target;
     this.targetingHound = targetingHound;
 
     this.discovered = false;
     this.alive = true;
+    
+    this.createImpact = createImpact;
 
     this.stats = {
-      radius: this.creator.stats.projectileRadius,
-      speed: this.creator.stats.projectileSpeed,
-      damage: this.creator.stats.projectileDamage,
-      homing: this.creator.stats.homingProjectiles
+      radius: stats.projectileRadius,
+      speed: stats.projectileSpeed,
+      damage: stats.projectileDamage,
+      homing: stats.homingProjectiles
     }
 
     this.stroke = '#fff';
     this.fill = '#fff';
-    this.origin = { x: creator.pos.x, y: creator.pos.y };
+    this.origin = { x: pos.x, y: pos.y };
     
     if (this.targetingHound)
       this.moveTo(target.pos);
     else
       this.moveTo(target);
 
+    /*
     var dotSpawnInterval = 1000;
     var me = this;
     this.trailInterval = setInterval(function () {
       me.spawnTrailDot()
     }, dotSpawnInterval);
+    */
   }
 
   moveTo(moveTarget) {
@@ -69,8 +76,7 @@ class Projectile {
 
   impact() {
     //create damage circle
-    var impact = new Impact(this.pos, this.stats.radius, this.stats.damage);
-    impacts.push(impact);
+    this.createImpact(this.pos, this.stats.radius, this.stats.damage);
     this.die();
   }
 
@@ -106,93 +112,4 @@ class Projectile {
   }
 }
 
-class Impact {
-  constructor(position, radius, damage) {
-    if (!radius)
-      radius = 100;
-    this.pos = position;
-    this.radius = radius;
-    this.alive = true;
-    this.damage = damage;
-
-    this.stroke = '#000';
-    this.fill = '#ffaa00';//'#9a9a9a'; for grey
-    this.alpha = 1;
-
-    this.damageHoundsInside();
-    this.damageCitiesInside();
-  }
-
-  damageHoundsInside() {
-    var impact = this;
-    hounds.forEach(function (hound) {
-      if (distanceBetween(hound.pos, impact.pos) < impact.radius)
-        hound.hurt(rollDice(6, impact.damage));
-    });
-  }
-
-  damageCitiesInside() {
-    var impact = this;
-    cities.forEach(function (city) {
-      if (distanceBetween(city.pos, impact.pos) < impact.radius)
-        city.hurt(rollDice(6, impact.damage));
-    });
-  }
-
-  update() {
-    if (!this.alive)
-      return;
-
-    var explosionFadeTime = 1400;
-
-    if (this.alpha > 0)
-      this.alpha -= timeStep / explosionFadeTime;
-    else
-      this.alpha = 0;
-
-    this.updateBounds();
-  }
-
-  updateBounds() {
-    if (!this.alive)
-      return;
-
-    var impactShrinkTime = 100;
-
-    if (this.radius > 0)
-      this.radius -= timeStep / impactShrinkTime;
-    else
-      this.die();
-  }
-
-  die() {
-    this.alive = false;
-  }
-}
-
-class TrailDot {
-  constructor(position, radius, color) {
-    this.pos = { x: position.x, y: position.y };
-    this.radius = radius;
-    this.alive = true;
-
-    this.fill = color;
-    this.alpha = 1;
-  }
-
-  update() {
-    if (!this.alive)
-      return;
-    var trailLifetime = 10000;
-    if (this.alpha > 0)
-      this.alpha -= timeStep / trailLifetime;
-    else {
-      this.alpha = 0;
-      this.die();
-    }
-  }
-
-  die() {
-    this.alive = false;
-  }
-}
+module.exports = Projectile;

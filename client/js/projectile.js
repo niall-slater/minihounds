@@ -1,7 +1,6 @@
 class Projectile {
-  constructor(creator, target, targetingHound) {
-    this.pos = { x: creator.pos.x, y: creator.pos.y };
-    this.creator = creator;
+  constructor(stats, pos, target, targetingHound) {
+    this.pos = { x: pos.x, y: pos.y };
     this.target = target;
     this.targetingHound = targetingHound;
 
@@ -9,22 +8,22 @@ class Projectile {
     this.alive = true;
 
     this.stats = {
-      radius: this.creator.stats.projectileRadius,
-      speed: this.creator.stats.projectileSpeed,
-      damage: this.creator.stats.projectileDamage,
-      homing: this.creator.stats.homingProjectiles
+      radius: stats.projectileRadius,
+      speed: stats.projectileSpeed,
+      damage: stats.projectileDamage,
+      homing: stats.homingProjectiles
     }
 
     this.stroke = '#fff';
     this.fill = '#fff';
-    this.origin = { x: creator.pos.x, y: creator.pos.y };
+    this.origin = { x: pos.x, y: pos.y };
     
     if (this.targetingHound)
       this.moveTo(target.pos);
     else
       this.moveTo(target);
 
-    var dotSpawnInterval = 1000;
+    var dotSpawnInterval = 100;
     var me = this;
     this.trailInterval = setInterval(function () {
       me.spawnTrailDot()
@@ -70,14 +69,14 @@ class Projectile {
   impact() {
     //create damage circle
     var impact = new Impact(this.pos, this.stats.radius, this.stats.damage);
-    impacts.push(impact);
+    gameData.impacts.push(impact);
     this.die();
   }
 
   spawnTrailDot() {
     if (!this.alive || !this.inSightRange())
       return;
-    trailDots.push(new TrailDot(this.pos, 5, '#fff'));
+    gameData.trailDots.push(new TrailDot(this.pos, 5, '#fff'));
   }
 
   render() {
@@ -91,23 +90,7 @@ class Projectile {
   }
 
   inSightRange() {
-    var playerHounds = hounds.filter(function (hound) {
-      return hound.team == playerTeam;
-    });
-
-    for (var i = 0; i < playerHounds.length; i++) {
-      if (distanceBetween(playerHounds[i].pos, this.pos) <
-          playerHounds[i].stats.sightRange)
-        return true;
-    }
-
-    for (var i = 0; i < cities.length; i++) {
-      if (distanceBetween(cities[i].pos, this.pos) <
-          cities[i].stats.sightRange)
-        return true;
-    }
-
-    return false;
+    return true;
   }
 
   die() {
@@ -135,7 +118,7 @@ class Impact {
 
   damageHoundsInside() {
     var impact = this;
-    hounds.forEach(function (hound) {
+    gameData.hounds.forEach(function (hound) {
       if (distanceBetween(hound.pos, impact.pos) < impact.radius)
         hound.hurt(rollDice(6, impact.damage));
     });
@@ -143,7 +126,7 @@ class Impact {
 
   damageCitiesInside() {
     var impact = this;
-    cities.forEach(function (city) {
+    gameData.cities.forEach(function (city) {
       if (distanceBetween(city.pos, impact.pos) < impact.radius)
         city.hurt(rollDice(6, impact.damage));
     });
@@ -202,7 +185,7 @@ class TrailDot {
   update() {
     if (!this.alive)
       return;
-    var trailLifetime = 10000;
+    var trailLifetime = 2000;
     if (this.alpha > 0)
       this.alpha -= timeStep / trailLifetime;
     else {

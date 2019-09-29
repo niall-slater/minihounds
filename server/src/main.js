@@ -1,6 +1,8 @@
 var TWEEN = require('@tweenjs/tween.js');
 var Hound = require('./hound.js');
 var Map = require('./map.js');
+var Projectile = require('./projectile.js');
+var Impact = require('./impact.js');
 var CommandController = require('./commands.js');
 var gameInstance;
 
@@ -12,12 +14,6 @@ function generateSeed() {
   }
   
   return result;
-}
-
-class GameState {
-  constructor(data) {
-    this.data = data;
-  }
 }
 
 class Game {
@@ -33,8 +29,6 @@ class Game {
       trailDots: [],
       cities: []
     }
-
-    this.gameState = new GameState(this.gameData);
     
     this.settings = {
       gameWidth: 800,
@@ -71,24 +65,46 @@ class Game {
     this.map = new Map(seed, this.settings);
     this.gameData.cities = this.map.cities;
     
-    var h1 = new Hound(
-      0, 'scout0', 
-      { x: this.settings.gameWidth / 2,
-        y: this.settings.gameHeight / 2 },
-      0, houndClassStats.scout,
-      this.map, this.timeStep);
+    this.createNewHound(
+      'scout0', 
+      this.settings.gameWidth / 2,
+      this.settings.gameHeight / 2,
+      0,
+      houndClassStats.scout);
     
-    var h2 = new Hound(
-      1, 'scout1', 
-      { x: this.settings.gameWidth / 2 + 150,
-        y: this.settings.gameHeight / 2 + 150 },
-      1, houndClassStats.scout,
-      this.map, this.timeStep);
-    
-    this.gameData.hounds.push(h1);
-    this.gameData.hounds.push(h2);
+    this.createNewHound(
+      'scout1',
+      this.settings.gameWidth / 2 + 150,
+      this.settings.gameHeight / 2 + 150,
+      1,
+      houndClassStats.scout);
     
     this.start();
+  }
+  
+  createNewHound(name, x, y, team, houndClass) {
+    var id = this.gameData.hounds.length;
+    var h = new Hound(
+      id, name, 
+      { x: x,
+        y: y},
+      team, houndClass,
+      this.map,
+      this.timeStep,
+      this.createProjectile.bind(this));
+    this.gameData.hounds.push(h);
+  }
+  
+  createProjectile(creator, target, targetingHound) {
+    var p = new Projectile(creator.stats, creator.pos, target, targetingHound, this.createImpact.bind(this));
+    this.gameData.projectiles.push(p);
+    this.sendToAllPlayers("spawnprojectile", p);
+  }
+  
+  createImpact(position, radius, damage) {
+    var i = new Impact(position, radius, damage, this.gameData.hounds,this.gameData.cities);
+    this.gameData.impacts.push(i);
+    this.sendToAllPlayers("spawnimpact", i);
   }
 
   start() {
@@ -108,7 +124,7 @@ class Game {
   update() {
     if (this.settings.paused) {
       this.gameData.projectiles.forEach(function (p) { p.update(); });
-      this.gameData.impacts.forEach(function (i) { i.update(); });
+      this.gameData.impacts.forEach(function (i) { i.update(this.timeStep); });
       this.gameData.trailDots.forEach(function (t) { t.update(); });
 
       this.gameData.projectiles = this.removeDead(this.gameData.projectiles);

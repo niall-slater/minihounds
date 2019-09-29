@@ -12,6 +12,8 @@ ioClient.on("console", (msg) => console.log(msg));
 ioClient.on("mapseed", (seed) => createMap(complexity, seed));
 ioClient.on("playerdetails", (details) => {playerDetails = details; addMessage("YOU ARE TEAM " + playerDetails.team)});
 ioClient.on("spawnhounds", (hounds) => spawnHounds(hounds));
+ioClient.on("spawnprojectile", (p) => spawnProjectile(p));
+ioClient.on("spawnimpact", (i) => spawnImpact(i));
 ioClient.on("update", (packet) => networkUpdate(packet));
 
 var timeStep = 10;
@@ -151,6 +153,14 @@ function spawnHounds(houndsSentFromServer) {
   }    
 }
 
+function spawnProjectile(p) {
+  gameData.projectiles.push(new Projectile(p.stats, p.pos, p.target, p.targetingHound));
+}
+
+function spawnImpact(i) {
+  gameData.impacts.push(new Impact(i.pos, i.radius, i.damage));
+}
+
 function win() {
   addMessage('WIN?');
 }
@@ -162,8 +172,6 @@ function lose() {
 /* Game functions */
 
 function networkUpdate(serverState) {
-  gameState = serverState;
-  
   for (var i = 0; i < serverState.cities.length; i++) {
     gameData.cities[i].stats = serverState.cities[i].stats;
     gameData.cities[i].alive = serverState.cities[i].alive;
@@ -174,6 +182,18 @@ function networkUpdate(serverState) {
     gameData.hounds[i].alive = serverState.hounds[i].alive;
     gameData.hounds[i].cooldowns = serverState.hounds[i].cooldowns;
     gameData.hounds[i].poly = serverState.hounds[i].poly;
+  }
+  
+  for (var i = 0; i < serverState.projectiles.length; i++) {
+    gameData.projectiles[i].pos = serverState.projectiles[i].pos;
+    gameData.projectiles[i].alive = serverState.projectiles[i].alive;
+  }
+  
+  for (var i = 0; i < serverState.impacts.length; i++) {
+    gameData.impacts[i].pos = serverState.impacts[i].pos;
+    gameData.impacts[i].radius = serverState.impacts[i].radius;
+    gameData.impacts[i].alpha = serverState.impacts[i].alpha;
+    gameData.impacts[i].alive = serverState.impacts[i].alive;
   }
 }
 

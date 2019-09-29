@@ -1,9 +1,11 @@
+const Projectile = require('./projectile.js');
+
 var houndMovementMultiplier = 0.03;
 var aiThinkInterval = 3000;
 var arriveAtLocationTolerance = 10;
 
 class Hound {
-  constructor(id, name, position, team, stats, map, timeStep) {
+  constructor(id, name, position, team, stats, map, timeStep, createProjectile) {
     this.id = id;
     this.name = name;
     this.pos = position;
@@ -12,6 +14,7 @@ class Hound {
     
     this.map = map;
     this.timeStep = timeStep;
+    this.createProjectile = createProjectile;
 
     this.tasks = [];
 
@@ -116,7 +119,13 @@ class Hound {
   updateMovement() {
     if (!this.moveTarget)
       return;
+    
     this.currentRegion = this.map.getRegionAt(this.pos.x, this.pos.y);
+
+    if (!this.currentRegion) {
+      this.stopMoving();
+      return;
+    }
 
     var speedCostAdjustment = 1 - this.stats.speedPenalty;
     this.pos.x += this.movement.x * this.timeStep * houndMovementMultiplier * speedCostAdjustment;
@@ -162,14 +171,14 @@ class Hound {
     this.updateTasks();
   }
   onInspect() {
-    addMessage(this.name + ": lvl" + this.stats.level, colors.text);
+    //addMessage(this.name + ": lvl" + this.stats.level, colors.text);
   }
 
   say(phrase) {
     if (!this.alive)
       return;
 
-    addMessage(this.name + " says: '" + phrase + "'");
+    //addMessage(this.name + " says: '" + phrase + "'");
   }
 
   hurt(amount) {
@@ -178,7 +187,7 @@ class Hound {
     this.stats.hp -= amount;
     var terrainCover = this.map.getRegionAt(this.pos.x, this.pos.y).defence;
     amount *= 1 - terrainCover;
-    addMessage(amount + " damage to " + this.name + ". " + this.stats.hp + "HP remaining.");
+    //addMessage(amount + " damage to " + this.name + ". " + this.stats.hp + "HP remaining.");
     if (this.stats.hp <= 0) {
       this.stats.hp = 0;
       this.die();
@@ -206,7 +215,7 @@ class Hound {
   }
 
   die() {
-    addMessage(this.name + ' DESTROYED');
+    //addMessage(this.name + ' DESTROYED');
     clearInterval(this.thinkInterval);
     this.alive = false;
   }
@@ -277,23 +286,23 @@ class Hound {
   attack(target) {
     if (this.cooldowns.attack > 0) {
       if (this.team === playerTeam)
-        addMessage(this.name + " cannot fire - reloading");
+        //addMessage(this.name + " cannot fire - reloading");
       return; 
     }
     this.cooldowns.attack = this.stats.attackCooldown;
-    projectiles.push(new Projectile(this, target, true));
+    this.createProjectile(this, target, true);
     var coords = parsePixels(this.pos.x, this.pos.y);
-    addMessage('WEAPON DISCHARGE DETECTED AT ' + Math.round(coords[0]) + ', ' + Math.round(coords[1]));
+    //addMessage('WEAPON DISCHARGE DETECTED AT ' + Math.round(coords[0]) + ', ' + Math.round(coords[1]));
   }
   attackPoint(target) {
     if (this.cooldowns.attack > 0) {
       if (this.team === 1)
-        addMessage(this.name + " cannot fire - reloading");
+        //addMessage(this.name + " cannot fire - reloading");
       return;
     }
     this.cooldowns.attack = this.stats.attackCooldown;
-    projectiles.push(new Projectile(this, target, false));
-    addMessage(this.name + ' WEAPON DISCHARGE');
+    this.createProjectile(this, target, false);
+    //addMessage(this.name + ' WEAPON DISCHARGE');
   }
 }
 

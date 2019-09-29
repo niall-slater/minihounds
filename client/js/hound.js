@@ -301,7 +301,7 @@ class Hound {
       return; 
     }
     this.cooldowns.attack = this.stats.attackCooldown;
-    gameData.projectiles.push(new Projectile(this, target, true));
+    gameData.projectiles.push(new Projectile(this.stats, this.pos, target, true));
     var coords = parsePixels(this.pos.x, this.pos.y);
     addMessage('WEAPON DISCHARGE DETECTED AT ' + Math.round(coords[0]) + ', ' + Math.round(coords[1]));
   }
@@ -312,7 +312,7 @@ class Hound {
       return; 
     }
     this.cooldowns.attack = this.stats.attackCooldown;
-    gameData.projectiles.push(new Projectile(this, target, false));
+    gameData.projectiles.push(new Projectile(this.stats, this.pos, target, false));
     addMessage(this.name + ' WEAPON DISCHARGE');
   }
 }
