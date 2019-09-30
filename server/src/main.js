@@ -307,8 +307,7 @@ module.exports.AddMessage = function(msg, team) {
     io.emit('console', msg);
   } else {
     connections.filter(function (c) {
-      console.log(c);
-      if (c.playerDetails.team === team)
+      if (c.details.team === team)
         c.emit('console', msg);
     });
   }

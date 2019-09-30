@@ -44,6 +44,7 @@ class Hound {
       this.startAi();
 
     this.updateBounds();
+    this.say('Ready!');
   }
 
   startAi() {
@@ -179,7 +180,7 @@ class Hound {
     if (!this.alive)
       return;
 
-    //addMessage(this.name + " says: '" + phrase + "'");
+    this.addMessage(this.name + " says: '" + phrase + "'", this.team);
   }
 
   hurt(amount) {
@@ -190,6 +191,7 @@ class Hound {
       return;
     this.stats.hp -= amount;
     this.addMessage(amount + " damage to " + this.name + ". " + this.stats.hp + "HP remaining.", this.team);
+    this.say("Argh! I'm hit!");
     if (this.stats.hp <= 0) {
       this.stats.hp = 0;
       this.die();
@@ -287,8 +289,7 @@ class Hound {
 
   attack(target) {
     if (this.cooldowns.attack > 0) {
-      if (this.team === playerTeam)
-        //addMessage(this.name + " cannot fire - reloading");
+      this.addMessage(this.name + " cannot fire - reloading", this.team);
       return; 
     }
     this.cooldowns.attack = this.stats.attackCooldown;
@@ -298,8 +299,7 @@ class Hound {
   }
   attackPoint(target) {
     if (this.cooldowns.attack > 0) {
-      if (this.team === 1)
-        //addMessage(this.name + " cannot fire - reloading");
+      this.addMessage(this.name + " cannot fire - reloading", this.team);
       return;
     }
     this.cooldowns.attack = this.stats.attackCooldown;
