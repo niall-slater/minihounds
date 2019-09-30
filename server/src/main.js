@@ -8,6 +8,7 @@ var gameInstance;
 
 var connections;
 var io;
+var gameOver = false;
 
 function generateSeed() {
   var length = 40;
@@ -125,6 +126,8 @@ class Game {
   /* Game functions */
 
   update() {
+    if (gameOver)
+      return;
     var timeStep = this.timeStep;
     TWEEN.update();
 
@@ -134,14 +137,14 @@ class Game {
     this.gameData.projectiles.forEach(function (p) { p.update(); });
     this.gameData.impacts.forEach(function (i) { i.update(timeStep); });
 
-    this.checkWinCondition();
-
     this.sendToAllPlayers('update', this.gameData);
 
     this.gameData.hounds = this.removeDead(this.gameData.hounds);
     this.gameData.projectiles = this.removeDead(this.gameData.projectiles);
     this.gameData.impacts = this.removeDead(this.gameData.impacts);
     this.gameData.cities = this.removeDead(this.gameData.cities);
+    
+    this.checkWinCondition();
   }
   
   sendToPlayer(player, message, content) {
@@ -176,8 +179,26 @@ class Game {
   }
 
   checkWinCondition() {
-    //check each team to see if there's just one remaining
+    if (this.getTeamHounds(0).length == 0 || this.getTeamHounds(1).length == 0) {
+      gameOver = true;
+    }
+    var winner;
+    if (gameOver) {
+      if (this.getTeamHounds(0).length > 0)
+        winner = 0;
+      else
+        winner = 1;
+      this.sendEndgameMessage(winner);
+    }
     //that's the winner
+  }
+  
+  sendEndgameMessage(winner) {
+    var loser = 0;
+    if (winner == 0)
+      loser = 1;
+    addMessage('You win!', winner);
+    addMessage('You lose!', loser);
   }
 
   removeDead(array) {
@@ -258,16 +279,15 @@ function getRandomProperty(obj) {
 /* UI INPUT/OUTPUT
 /*--------------------*/
 
-//Send a message to player's console
-function addMessage(text, recipient, delay) {
-  console.log(text);
-
-  if (!delay)
-    delay = 0;
-
-  setTimeout(function () {
-    //sendmessage
-  }, delay);
+function addMessage(msg, team) {
+  if (!team) {
+    io.emit('console', msg);
+  } else {
+    connections.filter(function (c) {
+      if (c.details.team === team)
+        c.emit('console', msg);
+    });
+  }
 }
 
 /*--------------------*/
@@ -302,13 +322,4 @@ module.exports.CreateFunction = function(sockets, ioClient) {
   gameInstance = new Game(sockets);
   module.exports.GameInstance = gameInstance;
 }
-module.exports.AddMessage = function(msg, team) {
-  if (!team) {
-    io.emit('console', msg);
-  } else {
-    connections.filter(function (c) {
-      if (c.details.team === team)
-        c.emit('console', msg);
-    });
-  }
-}
+module.exports.AddMessage = addMessage;
