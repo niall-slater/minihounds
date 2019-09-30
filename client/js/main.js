@@ -7,8 +7,8 @@ var ioClient = io.connect("http://localhost:3000");
 
 var complexity = 144;
 
-ioClient.on("test", (msg) => addMessage(msg));
-ioClient.on("console", (msg) => console.log(msg));
+ioClient.on("test", (msg) =>  console.log(msg));
+ioClient.on("console", (msg) => addMessage(msg));
 ioClient.on("mapseed", (seed) => createMap(complexity, seed));
 ioClient.on("playerdetails", (details) => {playerDetails = details; addMessage("YOU ARE TEAM " + playerDetails.team)});
 ioClient.on("spawnhounds", (hounds) => spawnHounds(hounds));

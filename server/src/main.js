@@ -6,6 +6,9 @@ var Impact = require('./impact.js');
 var CommandController = require('./commands.js');
 var gameInstance;
 
+var connections;
+var io;
+
 function generateSeed() {
   var length = 40;
   var result = [];
@@ -293,7 +296,20 @@ function rollDie(sides) {
 }
 
 module.exports.GameClass = Game;
-module.exports.CreateFunction = function(sockets) {
+module.exports.CreateFunction = function(sockets, ioClient) {
+  connections = sockets;
+  io = ioClient;
   gameInstance = new Game(sockets);
   module.exports.GameInstance = gameInstance;
+}
+module.exports.AddMessage = function(msg, team) {
+  if (!team) {
+    io.emit('console', msg);
+  } else {
+    connections.filter(function (c) {
+      console.log(c);
+      if (c.playerDetails.team === team)
+        c.emit('console', msg);
+    });
+  }
 }

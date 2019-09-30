@@ -1,6 +1,7 @@
 body {
   background: #333;
   color: #eee;
+  opacity: .1;
 }
 
 #probe-wrapper {

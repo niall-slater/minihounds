@@ -6,6 +6,7 @@ var arriveAtLocationTolerance = 10;
 
 class Hound {
   constructor(id, name, position, team, stats, map, timeStep, createProjectile) {
+    this.addMessage = require('./main.js').AddMessage;
     this.id = id;
     this.name = name;
     this.pos = position;
@@ -182,12 +183,13 @@ class Hound {
   }
 
   hurt(amount) {
+    var terrainCover = this.map.getRegionAt(this.pos.x, this.pos.y).defence;
+    amount *= 1 - terrainCover;
+    amount = Math.ceil(amount);
     if (!amount)
       return;
     this.stats.hp -= amount;
-    var terrainCover = this.map.getRegionAt(this.pos.x, this.pos.y).defence;
-    amount *= 1 - terrainCover;
-    //addMessage(amount + " damage to " + this.name + ". " + this.stats.hp + "HP remaining.");
+    this.addMessage(amount + " damage to " + this.name + ". " + this.stats.hp + "HP remaining.", this.team);
     if (this.stats.hp <= 0) {
       this.stats.hp = 0;
       this.die();
@@ -215,7 +217,7 @@ class Hound {
   }
 
   die() {
-    //addMessage(this.name + ' DESTROYED');
+    this.addMessage(this.name + ' DESTROYED');
     clearInterval(this.thinkInterval);
     this.alive = false;
   }
@@ -302,7 +304,7 @@ class Hound {
     }
     this.cooldowns.attack = this.stats.attackCooldown;
     this.createProjectile(this, target, false);
-    //addMessage(this.name + ' WEAPON DISCHARGE');
+    this.addMessage('WEAPON DISCHARGE DETECTED');
   }
 }
 

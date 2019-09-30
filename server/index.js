@@ -32,7 +32,7 @@ io.on('connection', function(socket) {
   if (connections.length == 2) {
     gameStarted = true;
     console.log('starting game...');
-    CreateFunction(connections);
+    CreateFunction(connections, io);
   }
 });
 
