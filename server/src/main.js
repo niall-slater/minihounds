@@ -70,18 +70,46 @@ class Game {
     this.gameData.cities = this.map.cities;
     
     this.createNewHound(
-      'scout0', 
-      this.settings.gameWidth / 2,
-      this.settings.gameHeight / 2,
+      'LYNX', 
+      204,
+      204,
       0,
       houndClassStats.scout);
     
     this.createNewHound(
-      'scout1',
-      this.settings.gameWidth / 2 + 150,
-      this.settings.gameHeight / 2 + 150,
+      'WOLF', 
+      300,
+      204,
+      0,
+      houndClassStats.soldier);
+    
+    this.createNewHound(
+      'BEAR', 
+      100,
+      204,
+      0,
+      houndClassStats.artillery);
+    
+    this.createNewHound(
+      'CROW', 
+      400,
+      800,
       1,
       houndClassStats.scout);
+    
+    this.createNewHound(
+      'EAGLE', 
+      500,
+      800,
+      1,
+      houndClassStats.soldier);
+    
+    this.createNewHound(
+      'VULTURE', 
+      600,
+      800,
+      1,
+      houndClassStats.artillery);
     
     this.start();
   }

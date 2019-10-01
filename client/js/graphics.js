@@ -140,7 +140,7 @@ var graphics = {
 
     //Render vision 
     gameData.hounds.forEach(function (h) {
-      if (this.team === playerDetails.team)
+      if (h.team === playerDetails.team)
         h.renderSightRange();
     });
     gameData.cities.forEach(function (c) { c.renderSightRange() });

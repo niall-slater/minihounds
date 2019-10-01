@@ -1,6 +1,6 @@
 var playerDetails = {
-  name: 'nige',
-  team: 1,
+  name: null,
+  team: null,
 };
 
 var ioClient = io.connect("http://localhost:3000");
