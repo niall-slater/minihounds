@@ -217,6 +217,8 @@ class Hound {
     }
 
     for (var i = 0; i < gameData.cities.length; i++) {
+      if (gameData.cities[i].team != playerDetails.team)
+        continue;
       if (distanceBetween(gameData.cities[i].pos, this.pos) <
           gameData.cities[i].stats.sightRange)
         return true;

@@ -1,9 +1,9 @@
 class City {
-  constructor(region, size, color) {
-    this.region = region;
+  constructor(name, x, y, size, color, team) {
+    this.name = name;
     this.pos = {
-      x: region.center.x,
-      y: region.center.y
+      x: x,
+      y: y
     };
     this.size = size;
     this.alive = true;
@@ -12,8 +12,6 @@ class City {
       hp: 20,
       sightRange: 250
     }
-
-    this.name = region.name + ' City';
     this.fill = color;
   }
 
@@ -29,6 +27,8 @@ class City {
   }
 
   renderSightRange() {
+    if (this.team != playerDetails.team)
+      return;
     graphics.drawCircle(this.pos.x, this.pos.y,
       this.stats.sightRange, '#fff');
   }

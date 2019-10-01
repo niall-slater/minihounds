@@ -83,8 +83,7 @@ class Map {
     });
     this.mapData.polygons = regions;
 
-    var me = this;
-    me.cities = [];
+    this.cities = [];
     
     //assign region properties
     for (var i = 0; i < this.mapData.polygons.length; i++) {
@@ -101,13 +100,22 @@ class Map {
         x: getCenterOfPolygon(poly)[0],
         y: getCenterOfPolygon(poly)[1]
       };
+    }
 
-      if (i%4 == 0 && poly.type.toLowerCase() != 'lake') {
-        var size = 15 + seed[i];
-        var city = new City(poly, size, '#eee');
-        me.cities.push(city);
-        poly.city = city;
-      }
+    var numCities = 6;
+
+    for (var i = 0; i < numCities ; i++) {
+      var size = 30 + seed[i];
+      var team = 0;
+      if (i > numCities/2)
+        team = 1;
+      var pos = {
+        x: seed[i] * 100,
+        y: seed[i + 1] * 100
+      };
+      pos.x = Math.min()
+      var city = new City(getFromArrayWithSeed(city_names, seed[i]), seed[i] * 100, seed[i + 1] * 100, size, '#eee', team);
+      this.cities.push(city);
     }
     //console.log('Mapdata:', this.mapData);
   }

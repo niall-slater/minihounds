@@ -1,19 +1,18 @@
 class City {
-  constructor(region, size, color) {
-    this.region = region;
+  constructor(name, x, y, size, color, team) {
+    this.name = name;
     this.pos = {
-      x: region.center.x,
-      y: region.center.y
+      x: x,
+      y: y
     };
     this.size = size;
     this.alive = true;
+    this.team = team;
     
     this.stats = {
       hp: rollDice(20, 3),
       sightRange: 200 + rollDice(20, 5)
     }
-
-    this.name = region.name + ' City';
     this.fill = color;
   }
 
