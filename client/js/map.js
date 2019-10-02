@@ -103,9 +103,17 @@ class Map {
     for (var i = 0; i < numCities ; i++) {
       var size = 30 + seed[i];
       var team = 0;
-      if (i > numCities/2)
+      if (i >= numCities/2)
         team = 1;
-      var city = new City(getFromArrayWithSeed(city_names, seed[i]), seed[i] * 100, seed[i + 1] * 100, size, '#eee', team);
+      var pos = {
+        x: seed[i] * 60,
+        y: seed[i + 1] * 60
+      };
+      pos.x = Math.min(settings.mapWidth - 100, pos.x);
+      pos.y = Math.min(settings.mapHeight - 100, pos.y);
+      var city = new City(
+        getFromArrayWithSeed(city_names, seed[i]), 
+        pos.x, pos.y, size, colors_primary[team], team);
       this.cities.push(city);
     }
     

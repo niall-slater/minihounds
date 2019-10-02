@@ -23,7 +23,7 @@ class City {
   render() {
     if (!this.alive)
       return;
-    graphics.drawRect(this.pos.x, this.pos.y, this.size, this.size, this.fill, '#333', this.name, '#000')
+    graphics.drawRect(this.pos.x, this.pos.y, this.size, this.size, this.fill, '#eee', this.name, '#fff')
   }
 
   renderSightRange() {
