@@ -23,7 +23,8 @@ function generateSeed() {
 class Game {
   constructor(sockets) {
     var seed = generateSeed();
-    
+    this.started = false;
+    this.complete = false;
     this.timeStep = 10;
     this.gameData = {
       mapSeed: seed,
@@ -70,42 +71,42 @@ class Game {
     this.gameData.cities = this.map.cities;
     
     this.createNewHound(
-      'LYNX', 
+      'lynx',
       204,
       204,
       0,
       houndClassStats.scout);
     
     this.createNewHound(
-      'WOLF', 
+      'wolf',
       300,
       204,
       0,
       houndClassStats.soldier);
     
     this.createNewHound(
-      'BEAR', 
+      'bear',
       100,
       204,
       0,
       houndClassStats.artillery);
     
     this.createNewHound(
-      'CROW', 
+      'crow',
       400,
       800,
       1,
       houndClassStats.scout);
     
     this.createNewHound(
-      'EAGLE', 
+      'eagle',
       500,
       800,
       1,
       houndClassStats.soldier);
     
     this.createNewHound(
-      'VULTURE', 
+      'vulture',
       600,
       800,
       1,
@@ -140,6 +141,7 @@ class Game {
   }
 
   start() {
+    this.started = true;
     setInterval(this.update.bind(this), this.timeStep);
     this.sendToAllPlayers('mapseed', this.gameData.mapSeed);
 
@@ -227,6 +229,12 @@ class Game {
       loser = 1;
     addMessage('You win!', winner);
     addMessage('You lose!', loser);
+    addMessage('Game over - refresh to rejoin queue');
+    this.end();
+  }
+  
+  end() {
+    this.complete = true;
   }
 
   removeDead(array) {
@@ -308,7 +316,7 @@ function getRandomProperty(obj) {
 /*--------------------*/
 
 function addMessage(msg, team) {
-  if (!team) {
+  if (team === undefined) {
     io.emit('console', msg);
   } else {
     connections.filter(function (c) {
@@ -349,5 +357,6 @@ module.exports.CreateFunction = function(sockets, ioClient) {
   io = ioClient;
   gameInstance = new Game(sockets);
   module.exports.GameInstance = gameInstance;
+  return gameInstance;
 }
 module.exports.AddMessage = addMessage;

@@ -97,6 +97,10 @@ body {
   width: 80%;
 }
 
+input {
+  text-transform: uppercase;
+}
+
 .btn-console {
   background: #000;
   border: 1px solid #050;
